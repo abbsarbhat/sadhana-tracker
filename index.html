@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quit The Apps - The Honest Alternative</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap" rel="stylesheet">
+    <style>
+        /* --- DEFINITIVE CUT V15.1 (RESPONSIVE BACKGROUND) --- */
+        :root {
+            --accent-yellow: #FBBF24;
+            --accent-yellow-dark: #F59E0B;
+            --accent-red: #EF4444;
+            --bg-dark: #111827;
+            --bg-black: #000000;
+            --text-light: #E5E7EB;
+            --text-gray: #9CA3AF;
+            --border-gray: #4B5563;
+        }
+
+        body { font-family: 'Inter', sans-serif; background: radial-gradient(ellipse at center, #111827 0%, #000000 100%); color: #E5E7EB; overflow-x: hidden; }
+        .main-content { position: relative; z-index: 2; }
+        .fade-in { animation: fadeIn 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) forwards; }
+        .reveal-step { opacity: 0; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
+        
+        /* --- RESPONSIVE SCROLLING IMAGE BACKGROUND --- */
+        #scrolling-background {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            /* * IMPORTANT: REPLACE THIS URL with your own image URL. */
+            background-image: url('img.jpg');
+            background-position: center center;
+        }
+        
+        /* Desktop: Side-to-side scroll */
+        @media (min-width: 768px) {
+            #scrolling-background {
+                background-size: 3000px auto; 
+                animation: scroll-left 60s linear infinite;
+            }
+            @keyframes scroll-left {
+                0% { background-position: 0% 50%; }
+                100% { background-position: -3000px 50%; }
+            }
+        }
+
+        /* Mobile: Subtle pan-and-zoom (Ken Burns) effect */
+        @media (max-width: 767px) {
+            #scrolling-background {
+                background-size: cover;
+                animation: kenBurnsMobile 40s infinite alternate ease-in-out;
+            }
+            @keyframes kenBurnsMobile {
+                0% { transform: scale(1) translate(0, 0); }
+                100% { transform: scale(1.1) translate(2%, -1%); }
+            }
+        }
+
+        .background-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(ellipse at center, rgba(17,24,39,0.75) 0%, rgba(17,24,39,0.98) 70%, #000 100%);
+            z-index: 1;
+        }
+        
+        /* --- ALL OTHER STYLES ARE UNCHANGED --- */
+        .headline-font { font-weight: 900; }
+        .accent-yellow { color: #FBBF24; }
+        .accent-yellow-bg { background-color: #FBBF24; }
+        .accent-yellow-bg-hover:hover { background-color: #F59E0B; }
+        .quiz-content-wrapper { position: relative; min-height: 350px; }
+        .quiz-question-container { position: absolute; width: 100%; opacity: 0; transform: translateX(50px); transition: transform 0.4s ease-out, opacity 0.4s ease-out; pointer-events: none; }
+        .quiz-question-container.active { opacity: 1; transform: translateX(0); pointer-events: auto; }
+        .quiz-question-container.slide-out { opacity: 0; transform: translateX(-50px); }
+        .quiz-option { transition: all 0.2s ease-in-out; }
+        .quiz-option:hover { border-color: #FBBF24; transform: translateY(-2px); }
+        .quiz-option.selected { background-color: #FBBF24; border-color: #FBBF24; color: #111827; transform: scale(1.02); }
+        .options-container.selection-made .quiz-option:not(.selected) { opacity: 0.4; pointer-events: none; }
+        .typewriter-text::after { content: '_'; animation: blink 0.7s step-end infinite; color: #FBBF24; }
+        @keyframes blink { 50% { opacity: 0; } }
+        #exit-intent-modal { display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.8); backdrop-filter: blur(5px); }
+        .cta-glow { box-shadow: 0 0 25px rgba(251, 191, 36, 0.6); animation: pulse-glow 2.5s infinite ease-in-out; }
+        @keyframes pulse-glow { 0%, 100% { box-shadow: 0 0 25px rgba(251, 191, 36, 0.6); } 50% { box-shadow: 0 0 40px rgba(251, 191, 36, 0.8); } }
+        .spot { width: 28px; height: 28px; border: 2px solid var(--border-gray); border-radius: 50%; display: flex; align-items: center; justify-content: center; transition: all 0.4s ease-in-out; }
+        .spot.available { background-color: var(--accent-yellow); border-color: var(--accent-yellow); box-shadow: 0 0 10px var(--accent-yellow); }
+        .spot.taken { background-color: #374151; border-color: var(--border-gray); }
+        @keyframes spot-flicker { 0%, 100% { opacity: 1; } 20%, 60% { opacity: 0.3; } 40%, 80% { opacity: 1; transform: scale(1.05); } }
+        .spot.flickering { animation: spot-flicker 0.4s linear; }
+        .timer-gauge-bg { stroke: var(--border-gray); }
+        .timer-gauge-fg { stroke: var(--accent-yellow); transition: stroke 1s linear, stroke-dashoffset 1s linear; transform: rotate(-90deg); transform-origin: 50% 50%; }
+        .timer-gauge-fg.urgent { stroke: var(--accent-red); }
+        .timer-text { animation: heartbeat 2.5s infinite ease-in-out; }
+        .timer-text.urgent { animation: heartbeat 1.2s infinite ease-in-out; }
+        @keyframes heartbeat { 50% { transform: scale(1.05); } }
+        .optin-container-urgent { animation: border-pulse-red 1.5s infinite; }
+        @keyframes border-pulse-red { 50% { border-color: var(--accent-red); box-shadow: 0 0 25px rgba(239, 68, 68, 0.5); } }
+        .interactive-input:focus { outline: none; box-shadow: 0 0 0 2px var(--bg-dark), 0 0 0 4px var(--accent-yellow-dark); }
+        .form-error-shake { animation: form-error-shake 0.5s ease; }
+        @keyframes form-error-shake { 0%,100%{transform:translateX(0)} 10%,30%,50%,70%,90%{transform:translateX(-5px)} 20%,40%,60%,80%{transform:translateX(5px)} }
+        .vignette-effect { box-shadow: inset 0 0 120px 20px rgba(0,0,0,0.7) !important; }
+        #quiz-content-container.glitch-active::after { content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 3px; background: rgba(255, 255, 255, 0.05); animation: scanline 1.5s linear infinite; }
+        @keyframes scanline { 0% { transform: translateY(-20px); } 100% { transform: translateY(120%); } }
+        .social-proof-text { transition: opacity 0.3s ease-in-out; }
+        .commitment-slider-container { user-select: none; -webkit-user-select: none; }
+        .commitment-slider-thumb { position: absolute; top: 4px; left: 4px; z-index: 10; }
+        .commitment-slider-thumb.unlocked { background-color: var(--accent-yellow) !important; }
+        #main-cta-btn:disabled { background-color: var(--border-gray); color: var(--text-gray); cursor: not-allowed; opacity: 0.7; box-shadow: none; }
+        #main-cta-btn:disabled:hover { background-color: var(--border-gray); }
+        #main-cta-btn.activating::after { content: ''; position: absolute; top: 0; left: 0; width: 10px; height: 100%; background: white; box-shadow: 0 0 20px 5px white; filter: blur(5px); animation: btn-scan 0.3s ease-out; }
+        @keyframes btn-scan { from { transform: translateX(-20px); } to { transform: translateX(500px); } }
+        @keyframes cta-thump { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.05); } }
+        .cta-unlocked-thump { animation: cta-thump 0.3s ease-in-out; }
+    </style>
+</head>
+<body class="flex items-center justify-center min-h-screen p-4 sm:p-6 md:p-8">
+
+    <div id="scrolling-background">
+        <div class="background-overlay"></div>
+    </div>
+    
+    <div id="exit-intent-modal" class="items-center justify-center">
+        </div>
+
+    <div class="w-full max-w-3xl mx-auto main-content">
+        <div id="landing-page" class="text-center fade-in">
+            <h1 class="text-3xl sm:text-4xl md:text-5xl headline-font text-white leading-tight mb-4">The Dating App Industry is a <span class="accent-yellow">Rigged Game.</span></h1>
+            <p class="text-lg sm:text-xl text-gray-300 max-w-2xl mx-auto mb-8">This quiz exposes how they're designed to fail you... and reveals the one honest alternative they hope you never find.</p>
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-6 max-w-3xl mx-auto mb-10 text-left">
+                <div class="bg-gray-800/50 p-4 rounded-lg border border-gray-700"><h3 class="font-bold text-white">End Ghosting</h3><p class="text-gray-400 text-sm mt-1">Stop wasting time on conversations that go nowhere.</p></div>
+                <div class="bg-gray-800/50 p-4 rounded-lg border border-gray-700"><h3 class="font-bold text-white">Escape Invisibility</h3><p class="text-gray-400 text-sm mt-1">Get seen by high-quality matches instead of being buried.</p></div>
+                <div class="bg-gray-800/50 p-4 rounded-lg border border-gray-700"><h3 class="font-bold text-white">Reclaim Your Time</h3><p class="text-gray-400 text-sm mt-1">No more endless swiping. Get real results, efficiently.</p></div>
+            </div>
+            <button id="start-quiz-btn" class="accent-yellow-bg accent-yellow-bg-hover text-gray-900 font-bold text-lg sm:text-xl py-4 px-12 rounded-lg shadow-lg transition duration-300 transform hover:scale-105">TAKE THE QUIZ</button>
+            <p class="text-gray-500 text-sm mt-3">100% confidential & takes under 60 seconds.</p>
+        </div>
+
+        <div id="quiz-container" class="hidden max-w-2xl mx-auto">
+             <div class="flex justify-between text-xs sm:text-sm text-gray-400 mb-2 px-1"><span class="progress-step active">The Problem</span><span class="progress-step">Your Experience</span><span class="progress-step">The Verdict</span></div>
+             <div class="w-full bg-gray-700 rounded-full h-2.5 mb-6"><div id="progress-bar" class="accent-yellow-bg h-2.5 rounded-full" style="width: 10%; transition: width 0.5s ease-out;"></div></div>
+             <div id="quiz-content-container" class="quiz-container-glass p-6 md:p-8 rounded-lg shadow-2xl transition-all duration-1000">
+                 <div class="quiz-content-wrapper">
+                 </div>
+             </div>
+        </div>
+
+        <div id="loading-page" class="hidden text-center fade-in">
+             </div>
+    </div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const page = { landing: document.getElementById('landing-page'), quiz: document.getElementById('quiz-container'), loading: document.getElementById('loading-page'), startBtn: document.getElementById('start-quiz-btn'), quizContentWrapper: document.querySelector('.quiz-content-wrapper'), quizContentContainer: document.getElementById('quiz-content-container'), progressBar: document.getElementById('progress-bar'), exitModal: document.getElementById('exit-intent-modal'), modalCountdown: document.getElementById('modal-countdown'), resumeBtn: document.getElementById('resume-button'), checkList: document.getElementById('check-list'), loadingName: document.getElementById('loading-name'), };
+        const quizData = [ { question: "When you use dating apps, what's the one feeling that hits you the hardest?", options: ["Invisible - like I don't even exist.", "Frustrated - by the endless, pointless swiping.", "Hopeless - that I'll ever meet someone real."] }, { question: "And what's the single biggest result of that feeling for you?", options: ["Getting zero matches for weeks.", "Conversations that are ghosted instantly.", "Realizing I've wasted hours of my life."], key: 'frustration' }, { question: "Finally, do you believe these apps are designed for your success, or for their profit?", options: ["They are designed for my success.", "They are designed for their profit."] } ];
+        let currentQuestionIndex = 0, userAnswers = {}, timerInterval, exitIntentShown = false, originalTitle = document.title, tabFlashInterval;
+
+        function typewriter(element, text, speed = 30) { let i = 0; element.innerHTML = ""; const typing = setInterval(() => { if (i < text.length) { element.innerHTML += text.charAt(i); i++; } else { clearInterval(typing); element.classList.remove('typewriter-text'); } }, speed); }
+        
+        function startQuiz() {
+            page.landing.style.display = 'none';
+            page.quiz.style.display = 'block';
+            const backgroundEl = document.getElementById('scrolling-background');
+            if (backgroundEl) backgroundEl.style.display = 'none';
+            let questionHTML = '';
+            quizData.forEach((q, index) => {
+                const options = q.options.map((opt, optIndex) => `<div class="quiz-option border-2 border-gray-600 rounded-lg p-4 mb-4 cursor-pointer text-base sm:text-lg" onclick="selectAnswer(${index}, ${optIndex})">${opt}</div>`).join('');
+                questionHTML += `<div class="quiz-question-container" data-question="${index}"><h2 class="text-xl sm:text-2xl md:text-3xl font-bold mb-6 typewriter-text"></h2><div class="options-container fade-in" style="animation-delay: 0.5s;">${options}</div></div>`;
+            });
+            page.quizContentWrapper.innerHTML = questionHTML;
+            showQuestion(0);
+        }
+
+        window.selectAnswer = function(qIndex, oIndex) { const questionContainer = page.quizContentWrapper.querySelector(`[data-question="${qIndex}"]`); const optionsContainer = questionContainer.querySelector('.options-container'); optionsContainer.querySelectorAll('.quiz-option')[oIndex].classList.add('selected'); optionsContainer.classList.add('selection-made'); const question = quizData[qIndex]; const answer = question.options[oIndex]; if (question.key) userAnswers[question.key] = answer; else userAnswers[qIndex] = answer; currentQuestionIndex++; updateProgressBar(); setTimeout(() => { questionContainer.classList.add('slide-out'); questionContainer.classList.remove('active'); if (currentQuestionIndex < quizData.length) { showQuestion(currentQuestionIndex); } else { setTimeout(renderOptInForm, 400); } }, 300); }
+        function showQuestion(index) { const questionToShow = page.quizContentWrapper.querySelector(`[data-question="${index}"]`); if (questionToShow) { questionToShow.classList.add('active'); const questionText = quizData[index].question; const h2 = questionToShow.querySelector('h2'); typewriter(h2, questionText); } }
+        function updateProgressBar() { const progressPercentage = (currentQuestionIndex / quizData.length) * 100; page.progressBar.style.width = `${progressPercentage}%`; page.quiz.querySelectorAll('.progress-step').forEach((step, index) => { step.classList.toggle('active', currentQuestionIndex > index); }); }
+        
+        function renderOptInForm() {
+            page.progressBar.style.width = `100%`;
+            page.quiz.querySelector('.progress-step:last-child').classList.add('active');
+            page.quizContentWrapper.innerHTML = '';
+            let personalizedHeadline = "Your Results Are Ready.";
+            if (userAnswers.frustration) { if (userAnswers.frustration.includes("zero matches")) personalizedHeadline = "We Found the Solution to Getting More Matches."; else if (userAnswers.frustration.includes("ghosted")) personalizedHeadline = "We Found the Fix for Ghosting."; else if (userAnswers.frustration.includes("wasted hours")) personalizedHeadline = "We Found a Way to Stop Wasting Your Time."; }
+            
+            // --- TWEAKED HTML with better spacing ---
+            const optInHTML = `
+                <div class="text-center fade-in">
+                    <div class="relative w-40 h-40 md:w-48 md:h-48 mx-auto mb-4">
+                        <svg class="w-full h-full" viewBox="0 0 100 100"><circle class="timer-gauge-bg" cx="50" cy="50" r="45" stroke-width="8" fill="none"></circle><circle id="timer-gauge-fg" class="timer-gauge-fg" cx="50" cy="50" r="45" stroke-width="8" fill="none"></circle></svg>
+                        <div id="countdown-timer" class="timer-text absolute top-0 left-0 w-full h-full flex items-center justify-center text-4xl md:text-5xl headline-font transition-colors duration-500">05:00</div>
+                    </div>
+                    <h2 class="text-xl sm:text-2xl md:text-3xl font-bold accent-yellow mb-2">${personalizedHeadline}</h2>
+                    <p class="text-base sm:text-lg text-gray-300 mb-8">Your access is reserved for the time on the clock. After that, your spot will be given away.</p>
+                    
+                    <div class="max-w-md mx-auto space-y-5">
+                        <div class="bg-gray-900/50 border border-gray-700 rounded-lg p-4 space-y-3">
+                            <div class="text-left text-sm"><div class="flex items-center"><svg class="w-5 h-5 text-green-400 mr-3 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg><div><span class="text-gray-400">Analysis Complete:</span> <strong id="analysis-result" class="text-white typewriter-text"></strong></div></div></div>
+                            <div class="border-t border-gray-700"></div>
+                            <div class="text-left text-sm"><div class="flex items-center"><span class="text-gray-400 mr-3">SYSTEM STATUS: <span class="text-red-500 font-bold">LIVE</span></span><div id="visual-scarcity-container" class="flex items-center gap-2"></div></div><div id="social-proof-container" class="text-xs text-gray-400 h-4 mt-1"></div></div>
+                        </div>
+
+                        <form id="optin-form" class="w-full" novalidate>
+                            <div class="space-y-3">
+                                <div class="relative"><input type="text" id="first-name" placeholder="Enter your first name" class="w-full p-4 bg-gray-800 border-2 border-gray-700 rounded-lg text-white text-lg transition-all duration-300 interactive-input" required><small class="text-red-400 text-xs absolute -bottom-5 left-1 opacity-0 transition-opacity"></small></div>
+                                <div class="relative flex items-center"><input type="email" id="email" placeholder="Enter your best email address" class="w-full p-4 bg-gray-800 border-2 border-gray-700 rounded-lg text-white text-lg transition-all duration-300 interactive-input" required><div class="group relative ml-2"><svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path></svg><div class="absolute bottom-full mb-2 -left-1/2 -translate-x-1/4 w-48 bg-black text-white text-xs rounded py-1 px-2 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none">100% secure. We will never share your email.<svg class="absolute text-black h-2 w-full left-0 top-full" x="0px" y="0px" viewBox="0 0 255 255"><polygon class="fill-current" points="0,0 127.5,127.5 255,0"></svg></div></div></div><small id="email-error" class="text-red-400 text-xs text-left -mt-3 mb-2 block h-4 opacity-0 transition-opacity"></small>
+                            </div>
+                            <div id="commitment-slider-container" class="w-full bg-gray-700 rounded-full p-1 my-6 relative h-12 flex items-center commitment-slider-container"><div id="commitment-slider-thumb" class="w-24 h-10 bg-gray-500 rounded-full flex items-center justify-center cursor-pointer transition-all duration-300 commitment-slider-thumb"><svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg></div><span id="commitment-slider-text" class="absolute left-1/2 -translate-x-1/2 text-gray-400 text-sm pointer-events-none">Slide to Commit</span></div>
+                            <button type="submit" id="main-cta-btn" class="w-full accent-yellow-bg accent-yellow-bg-hover text-gray-900 py-3 px-10 rounded-lg transition-colors cta-glow relative overflow-hidden">
+                                <span class="text-xl font-bold">UNLOCK INSTANT ACCESS</span>
+                            </button>
+                        </form>
+                    </div>
+                </div>`;
+            page.quizContentWrapper.innerHTML = optInHTML;
+            typewriter(document.getElementById('analysis-result'), userAnswers.frustration || 'Your Experience', 40);
+            startUrgencySequence(5 * 60);
+            document.getElementById('optin-form').addEventListener('submit', handleFormSubmit);
+            activateCommitmentSlider();
+        }
+        function activateCommitmentSlider() {
+            const slider = document.getElementById('commitment-slider-container'); const thumb = document.getElementById('commitment-slider-thumb'); const ctaBtn = document.getElementById('main-cta-btn'); if (!slider || !thumb || !ctaBtn) return; ctaBtn.disabled = true; let isDragging = false; const startDrag = (e) => { isDragging = true; }; const endDrag = (e) => { if(!isDragging) return; isDragging = false; const sliderRect = slider.getBoundingClientRect(); const thumbRect = thumb.getBoundingClientRect(); if (thumbRect.right > sliderRect.right - 20) { thumb.style.left = `${sliderRect.width - thumb.offsetWidth - 4}px`; thumb.classList.add('unlocked'); document.getElementById('commitment-slider-text').style.opacity = '0'; thumb.innerHTML = `<svg class="w-6 h-6 text-black" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>`; ctaBtn.classList.add('activating'); setTimeout(() => { ctaBtn.disabled = false; ctaBtn.classList.remove('activating'); ctaBtn.classList.add('cta-unlocked-thump'); setTimeout(()=> ctaBtn.classList.remove('cta-unlocked-thump'), 300); }, 300); } else { thumb.style.left = '4px'; } }; const onDrag = (e) => { if (!isDragging) return; e.preventDefault(); const clientX = e.touches ? e.touches[0].clientX : e.clientX; const sliderRect = slider.getBoundingClientRect(); let newLeft = clientX - sliderRect.left - (thumb.offsetWidth / 2); if (newLeft < 4) newLeft = 4; if (newLeft > sliderRect.width - thumb.offsetWidth - 4) newLeft = sliderRect.width - thumb.offsetWidth - 4; thumb.style.left = `${newLeft}px`; }; thumb.addEventListener('mousedown', startDrag); thumb.addEventListener('touchstart', startDrag, {passive: true}); document.addEventListener('mouseup', endDrag); document.addEventListener('touchend', endDrag); document.addEventListener('mousemove', onDrag); document.addEventListener('touchmove', onDrag, {passive: false});
+        }
+        function startUrgencySequence(totalDuration) {
+            const timerEl = document.getElementById('countdown-timer'); const gaugeFgEl = document.getElementById('timer-gauge-fg'); const scarcityContainer = document.getElementById('visual-scarcity-container'); const socialProofEl = document.getElementById('social-proof-container'); const ctaBtn = document.getElementById('main-cta-btn'); if(!gaugeFgEl) return; const radius = gaugeFgEl.r.baseVal.value; const circumference = 2 * Math.PI * radius; gaugeFgEl.style.strokeDasharray = circumference; gaugeFgEl.style.strokeDashoffset = 0; const totalSpots = 7, spotsToTake = 5; const locations = ["California", "Texas", "New York", "Florida", "Ohio", "Illinois"];
+            for (let i = 0; i < totalSpots; i++) { scarcityContainer.innerHTML += `<div class="spot available" data-spot-id="${i}"><svg class="w-4 h-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd" /></svg></div>`; }
+            const spots = Array.from(scarcityContainer.children);
+            // --- TWEAKED PACING ---
+            const takeSpot = (spotIndex) => { const spotToTake = spots[spotIndex]; if (!spotToTake) return; spotToTake.classList.add('flickering'); setTimeout(() => { spotToTake.classList.remove('available', 'flickering'); spotToTake.classList.add('taken'); socialProofEl.innerHTML = `<p class="social-proof-text opacity-0">Access claimed by user in ${locations[spotIndex % locations.length]}</p>`; setTimeout(() => { if(socialProofEl.querySelector('p')) socialProofEl.querySelector('p').style.opacity = 1; }, 50); setTimeout(() => { if(socialProofEl.querySelector('p')) socialProofEl.querySelector('p').style.opacity = 0; }, 2800); }, 400); };
+            for (let i = 0; i < spotsToTake; i++) { setTimeout(() => takeSpot(i), 3000 + i * 2200); } // Slower start and interval
+            let duration = totalDuration; timerInterval = setInterval(() => { duration--; const minutes = String(Math.floor(duration / 60)).padStart(2, '0'); const seconds = String(duration % 60).padStart(2, '0'); const timeString = `${minutes}:${seconds}`; if (timerEl) timerEl.textContent = timeString; if (page.modalCountdown) page.modalCountdown.textContent = timeString; const progress = duration / totalDuration; gaugeFgEl.style.strokeDashoffset = circumference * (1 - progress); if (duration < 60) { if (timerEl) timerEl.classList.add('urgent'); if (gaugeFgEl) gaugeFgEl.classList.add('urgent'); if (page.quizContentContainer) page.quizContentContainer.classList.add('optin-container-urgent'); } if (duration < 30) { if (page.quizContentContainer) { page.quizContentContainer.classList.add('vignette-effect', 'glitch-active'); } } if (ctaBtn && !ctaBtn.disabled) ctaBtn.style.animationDuration = `${Math.max(0.5, 2.5 * progress)}s`; if (duration <= 0) { stopAllTimers(); if (timerEl) timerEl.parentElement.innerHTML = `<div class="text-3xl font-bold text-red-500 flex items-center justify-center h-full">TIME<br>EXPIRED</div>`; if (page.quizContentContainer) page.quizContentContainer.classList.add('optin-container-urgent'); } }, 1000);
+        }
+        function handleFormSubmit(e) {
+            e.preventDefault(); const form = e.target; const nameInput = form.querySelector('#first-name'); const emailInput = form.querySelector('#email'); const ctaBtn = form.querySelector('#main-cta-btn'); let isValid = true;
+            const validateInput = (input, message, errorElId = null) => { const errorEl = errorElId ? document.getElementById(errorElId) : input.closest('.relative').querySelector('small'); const parent = input.closest('.relative'); if (!input.value.trim() || (input.type === 'email' && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(input.value))) { if(parent) parent.classList.add('form-error-shake'); if(errorEl) { errorEl.textContent = message; errorEl.style.opacity = '1'; } setTimeout(() => parent.classList.remove('form-error-shake'), 500); return false; } if(errorEl) errorEl.style.opacity = '0'; return true; };
+            isValid = validateInput(nameInput, "First name is required.") && isValid;
+            isValid = validateInput(emailInput, "A valid email is required.", 'email-error') && isValid;
+            if (ctaBtn.disabled) { const slider = document.getElementById('commitment-slider-container'); if(slider) { slider.classList.add('form-error-shake'); setTimeout(()=>slider.classList.remove('form-error-shake'), 500); } isValid = false; }
+            if (!isValid) return;
+            stopAllTimers(); userAnswers.firstName = nameInput.value; userAnswers.email = emailInput.value; console.log('High-Quality Lead Captured:', userAnswers); page.quiz.style.display = 'none'; page.loading.style.display = 'block'; startLoadingSequence(userAnswers.firstName);
+        }
+        function stopAllTimers() { clearInterval(timerInterval); clearInterval(tabFlashInterval); document.title = originalTitle; }
+        function handleExitIntent(e) { if (!exitIntentShown && e.clientY <= 0) { exitIntentShown = true; page.exitModal.style.display = 'flex'; } }
+        function handleVisibilityChange() { if (document.hidden) { let i = 0; tabFlashInterval = setInterval(() => { document.title = (i++ % 2) ? originalTitle : "🔴 YOUR SPOT IS EXPIRING!"; }, 1000); } else { if (tabFlashInterval) stopAllTimers(); } }
+        function startLoadingSequence(name) { document.body.removeEventListener('mouseleave', handleExitIntent); page.loadingName.textContent = name; const checks = ["Verifying commitment status...", "Cross-referencing against 'Rigged Game' database...", "Securing your private access link...", "Confirming priority pass..."]; let i = 0; const checkInterval = setInterval(() => { if (i < checks.length) { page.checkList.innerHTML += `<div class="check-item flex items-center text-lg sm:text-xl fade-in"><svg class="w-6 h-6 text-green-400 mr-3 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg><span>${checks[i]}</span></div>`; i++; } else { clearInterval(checkInterval); setTimeout(triggerAutoRedirect, 500); } }, 1200); }
+        function triggerAutoRedirect() { const affiliateURL = `https://www.google.com/search?q=example+affiliate+offer&name=${encodeURIComponent(userAnswers.firstName)}&email=${encodeURIComponent(userAnswers.email)}`; page.checkList.innerHTML += `<div class="text-center mt-8 p-6 bg-gray-900/70 rounded-lg border-2 border-amber-400 fade-in"><p class="text-xl sm:text-2xl font-bold accent-yellow">ACCESS GRANTED!</p><p class="text-gray-300 mt-2 mb-6">${userAnswers.firstName}, your secure link is ready. You will be redirected automatically.</p><a href="${affiliateURL}" class="w-full sm:w-auto inline-block accent-yellow-bg accent-yellow-bg-hover text-gray-900 font-bold text-lg py-4 px-12 rounded-lg shadow-lg">TAKE ME THERE NOW</a><div id="redirect-countdown" class="text-gray-400 text-sm mt-4"></div></div>`; let countdown = 3; const countdownEl = document.getElementById('redirect-countdown'); const redirectInterval = setInterval(() => { countdownEl.textContent = `Redirecting in ${countdown}...`; if (--countdown < 0) { clearInterval(redirectInterval); window.location.href = affiliateURL; } }, 1000); }
+        
+        // Final setup calls
+        if (page.startBtn) page.startBtn.addEventListener('click', startQuiz);
+        if (page.resumeBtn) page.resumeBtn.addEventListener('click', () => { page.exitModal.style.display = 'none'; });
+    });
+    </script>
+</body>
+</html>
