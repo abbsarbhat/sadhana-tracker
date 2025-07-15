@@ -3,592 +3,260 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sādhana of Abbsar Bhat</title>
+    <title>Quit The Apps - The Honest Alternative</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="manifest" href="manifest.json">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@700&family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/tone/14.7.77/Tone.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap" rel="stylesheet">
     <style>
+        /* --- DEFINITIVE CUT V15.1 (RESPONSIVE BACKGROUND) --- */
         :root {
-            --color-bg: #100f14; --color-primary: #f2e9e4; --color-secondary: #9a8c98;
-            --color-accent-gold: #c9a227; --color-accent-violet: #7b2cbf; --color-accent-teal: #188f83;
-            --glow-shadow: 0 0 8px #c9a22744, 0 0 16px #c9a22744, 0 0 24px #7b2cbf33;
+            --accent-yellow: #FBBF24;
+            --accent-yellow-dark: #F59E0B;
+            --accent-red: #EF4444;
+            --bg-dark: #111827;
+            --bg-black: #000000;
+            --text-light: #E5E7EB;
+            --text-gray: #9CA3AF;
+            --border-gray: #4B5563;
         }
-        @keyframes background-pan { 0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } }
-        @keyframes subtle-pulse { 0% { box-shadow: var(--glow-shadow); } 50% { box-shadow: 0 0 12px #c9a22755, 0 0 24px #c9a22755, 0 0 36px #7b2cbf44; } 100% { box-shadow: var(--glow-shadow); } }
-        @keyframes shimmer { 0% { stroke: url(#shimmer-gradient-1); } 33% { stroke: url(#shimmer-gradient-2); } 66% { stroke: url(#shimmer-gradient-3); } 100% { stroke: url(#shimmer-gradient-1); } }
-        @keyframes cascade-in { from { opacity: 0; transform: translate(-10px, 20px); } to { opacity: 1; transform: translate(0, 0); } }
-        @keyframes quote-fade-in { from { opacity: 0; } to { opacity: 1; } }
-        body {
-            font-family: 'Inter', sans-serif; background-color: var(--color-bg);
-            background-image: radial-gradient(circle at 100% 0%, var(--color-accent-violet) -20%, transparent 40%), radial-gradient(circle at 10% 100%, var(--color-accent-teal) -20%, transparent 40%);
-            color: var(--color-primary); -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; cursor: none;
+
+        body { font-family: 'Inter', sans-serif; background: radial-gradient(ellipse at center, #111827 0%, #000000 100%); color: #E5E7EB; overflow-x: hidden; }
+        .main-content { position: relative; z-index: 2; }
+        .fade-in { animation: fadeIn 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) forwards; }
+        .reveal-step { opacity: 0; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
+        
+        /* --- RESPONSIVE SCROLLING IMAGE BACKGROUND --- */
+        #scrolling-background {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            /* * IMPORTANT: REPLACE THIS URL with your own image URL. */
+            background-image: url('img.jpg');
+            background-position: center center;
         }
-        #app::before {
-            content: ''; position: fixed; top: 0; left: 0; right: 0; bottom: 0;
-            background: linear-gradient(135deg, #100f14, #100f14, #120f1c, #100f14, #100f14);
-            background-size: 400% 400%; animation: background-pan 30s ease-in-out infinite; z-index: -2;
+        
+        /* Desktop: Side-to-side scroll */
+        @media (min-width: 768px) {
+            #scrolling-background {
+                background-size: 3000px auto; 
+                animation: scroll-left 60s linear infinite;
+            }
+            @keyframes scroll-left {
+                0% { background-position: 0% 50%; }
+                100% { background-position: -3000px 50%; }
+            }
         }
-        #mouse-trail-canvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 9999; pointer-events: none; }
-        .font-cinzel-dec { font-family: 'Cinzel Decorative', serif; }
-        .title-glow { text-shadow: 0 0 8px #ffffff33, 0 0 12px var(--color-accent-gold); }
-        .panel {
-            background: #100f1466; backdrop-filter: blur(10px); border: 1px solid #ffffff1a;
-            border-radius: 16px; box-shadow: var(--glow-shadow), inset 0 1px 0 #ffffff1a;
-            transition: all 0.4s ease;
+
+        /* Mobile: Subtle pan-and-zoom (Ken Burns) effect */
+        @media (max-width: 767px) {
+            #scrolling-background {
+                background-size: cover;
+                animation: kenBurnsMobile 40s infinite alternate ease-in-out;
+            }
+            @keyframes kenBurnsMobile {
+                0% { transform: scale(1) translate(0, 0); }
+                100% { transform: scale(1.1) translate(2%, -1%); }
+            }
         }
-        .task-item {
-            border-bottom: 1px solid #ffffff1a; transition: background-color 0.3s ease, transform 0.2s ease;
-            position: relative; opacity: 0; transform: translate(-10px, 20px);
-            animation: cascade-in 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards; border-radius: 8px;
+
+        .background-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(ellipse at center, rgba(17,24,39,0.75) 0%, rgba(17,24,39,0.98) 70%, #000 100%);
+            z-index: 1;
         }
-        .task-item:hover { background-color: #ffffff0d; transform: scale(1.02); }
-        .task-item.completed .task-name { text-decoration: line-through; color: var(--color-secondary); opacity: 0.7; }
-        .checkbox-custom {
-            width: 24px; height: 24px; border: 2px solid var(--color-secondary);
-            border-radius: 50%; transition: all 0.3s ease; flex-shrink: 0; position: relative;
-        }
-        .task-item.completed .checkbox-custom { border-color: var(--color-accent-gold); background-color: var(--color-accent-gold); box-shadow: 0 0 12px var(--color-accent-gold); }
-        .checkbox-custom::after { content: ''; position: absolute; top: 50%; left: 50%; width: 100%; height: 100%; border-radius: 50%; background: var(--color-accent-gold); transform: translate(-50%,-50%) scale(0); opacity: 0; }
-        .task-item.completed .checkbox-custom::after { animation: ripple 0.6s ease-out; }
-        .checkbox-custom svg { color: var(--color-bg); z-index: 1; transition: transform 0.4s ease; transform: scale(0); }
-        .task-item.completed .checkbox-custom svg { transform: scale(1); }
-        #daily-progress-bar { background: var(--color-accent-gold); box-shadow: 0 0 8px var(--color-accent-gold), 0 0 12px var(--color-accent-gold); border-radius: 999px; }
-        .orb-container { animation: subtle-pulse 5s ease-in-out infinite; }
-        .progress-circle-fg { animation: shimmer 6s linear infinite; transition: stroke-dashoffset 0.8s ease; }
-        .starmap { display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: 4px; max-width: 160px; }
-        .star { width: 6px; height: 6px; border-radius: 50%; background: #ffffff1a; transition: all 0.5s ease; }
-        .star.lit { background: var(--color-accent-gold); box-shadow: 0 0 4px var(--color-accent-gold); }
-        .calendar { display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; }
-        .calendar-day { display: flex; justify-content: center; align-items: center; width: 32px; height: 32px; border-radius: 50%; background-color: #ffffff0a; color: var(--color-secondary); font-size: 12px; }
-        .calendar-day.perfect { background-color: var(--color-accent-gold); color: var(--color-bg); font-weight: bold; }
-        .calendar-day.good { background-color: var(--color-accent-violet); }
-        .calendar-day.today { border: 1px solid var(--color-accent-gold); }
-        .calendar-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
-        .calendar-nav { background: none; border: none; color: var(--color-secondary); cursor: pointer; padding: 4px 8px; border-radius: 4px; }
-        .calendar-nav:hover { background: #ffffff1a; color: var(--color-primary); }
-        .logbook-entry { border-bottom: 1px solid #ffffff1a; padding: 4px 0; font-size: 14px; }
-        .modal-bg { background-color: #100f14cc; backdrop-filter: blur(8px); }
-        .modal-content { background: #18161f; border: 1px solid #ffffff1a; box-shadow: var(--glow-shadow); animation: popIn 0.4s ease forwards; border-radius: 16px; }
-        #toast { background-color: #18161f; color: var(--color-primary); border-radius: 8px; border: 1px solid #ffffff1a; box-shadow: var(--glow-shadow); transition: opacity 0.4s ease, transform 0.4s ease; }
-        #toast.show { opacity: 1; transform: translateY(0); }
-        .confetti { position: absolute; width: 8px; height: 16px; background: var(--color-accent-gold); top: -20px; opacity: 0; animation: fall 5s linear forwards; }
-        .confetti:nth-child(2n) { background: var(--color-accent-violet); }
-        .confetti:nth-child(3n) { background: var(--color-accent-teal); }
-        #daily-quote { animation: quote-fade-in 1.5s ease; }
-        @keyframes popIn { from { opacity: 0; transform: scale(0.8); } to { opacity: 1; transform: scale(1); } }
-        @keyframes fall { 0% { transform: translateY(0) rotateZ(0deg); opacity: 1; } 100% { transform: translateY(100vh) rotateZ(720deg); opacity: 0; } }
-        @keyframes ripple { 0% { transform: translate(-50%,-50%) scale(0); opacity: 0.7; } 100% { transform: translate(-50%,-50%) scale(3); opacity: 0; } }
+        
+        /* --- ALL OTHER STYLES ARE UNCHANGED --- */
+        .headline-font { font-weight: 900; }
+        .accent-yellow { color: #FBBF24; }
+        .accent-yellow-bg { background-color: #FBBF24; }
+        .accent-yellow-bg-hover:hover { background-color: #F59E0B; }
+        .quiz-content-wrapper { position: relative; min-height: 350px; }
+        .quiz-question-container { position: absolute; width: 100%; opacity: 0; transform: translateX(50px); transition: transform 0.4s ease-out, opacity 0.4s ease-out; pointer-events: none; }
+        .quiz-question-container.active { opacity: 1; transform: translateX(0); pointer-events: auto; }
+        .quiz-question-container.slide-out { opacity: 0; transform: translateX(-50px); }
+        .quiz-option { transition: all 0.2s ease-in-out; }
+        .quiz-option:hover { border-color: #FBBF24; transform: translateY(-2px); }
+        .quiz-option.selected { background-color: #FBBF24; border-color: #FBBF24; color: #111827; transform: scale(1.02); }
+        .options-container.selection-made .quiz-option:not(.selected) { opacity: 0.4; pointer-events: none; }
+        .typewriter-text::after { content: '_'; animation: blink 0.7s step-end infinite; color: #FBBF24; }
+        @keyframes blink { 50% { opacity: 0; } }
+        #exit-intent-modal { display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.8); backdrop-filter: blur(5px); }
+        .cta-glow { box-shadow: 0 0 25px rgba(251, 191, 36, 0.6); animation: pulse-glow 2.5s infinite ease-in-out; }
+        @keyframes pulse-glow { 0%, 100% { box-shadow: 0 0 25px rgba(251, 191, 36, 0.6); } 50% { box-shadow: 0 0 40px rgba(251, 191, 36, 0.8); } }
+        .spot { width: 28px; height: 28px; border: 2px solid var(--border-gray); border-radius: 50%; display: flex; align-items: center; justify-content: center; transition: all 0.4s ease-in-out; }
+        .spot.available { background-color: var(--accent-yellow); border-color: var(--accent-yellow); box-shadow: 0 0 10px var(--accent-yellow); }
+        .spot.taken { background-color: #374151; border-color: var(--border-gray); }
+        @keyframes spot-flicker { 0%, 100% { opacity: 1; } 20%, 60% { opacity: 0.3; } 40%, 80% { opacity: 1; transform: scale(1.05); } }
+        .spot.flickering { animation: spot-flicker 0.4s linear; }
+        .timer-gauge-bg { stroke: var(--border-gray); }
+        .timer-gauge-fg { stroke: var(--accent-yellow); transition: stroke 1s linear, stroke-dashoffset 1s linear; transform: rotate(-90deg); transform-origin: 50% 50%; }
+        .timer-gauge-fg.urgent { stroke: var(--accent-red); }
+        .timer-text { animation: heartbeat 2.5s infinite ease-in-out; }
+        .timer-text.urgent { animation: heartbeat 1.2s infinite ease-in-out; }
+        @keyframes heartbeat { 50% { transform: scale(1.05); } }
+        .optin-container-urgent { animation: border-pulse-red 1.5s infinite; }
+        @keyframes border-pulse-red { 50% { border-color: var(--accent-red); box-shadow: 0 0 25px rgba(239, 68, 68, 0.5); } }
+        .interactive-input:focus { outline: none; box-shadow: 0 0 0 2px var(--bg-dark), 0 0 0 4px var(--accent-yellow-dark); }
+        .form-error-shake { animation: form-error-shake 0.5s ease; }
+        @keyframes form-error-shake { 0%,100%{transform:translateX(0)} 10%,30%,50%,70%,90%{transform:translateX(-5px)} 20%,40%,60%,80%{transform:translateX(5px)} }
+        .vignette-effect { box-shadow: inset 0 0 120px 20px rgba(0,0,0,0.7) !important; }
+        #quiz-content-container.glitch-active::after { content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 3px; background: rgba(255, 255, 255, 0.05); animation: scanline 1.5s linear infinite; }
+        @keyframes scanline { 0% { transform: translateY(-20px); } 100% { transform: translateY(120%); } }
+        .social-proof-text { transition: opacity 0.3s ease-in-out; }
+        .commitment-slider-container { user-select: none; -webkit-user-select: none; }
+        .commitment-slider-thumb { position: absolute; top: 4px; left: 4px; z-index: 10; }
+        .commitment-slider-thumb.unlocked { background-color: var(--accent-yellow) !important; }
+        #main-cta-btn:disabled { background-color: var(--border-gray); color: var(--text-gray); cursor: not-allowed; opacity: 0.7; box-shadow: none; }
+        #main-cta-btn:disabled:hover { background-color: var(--border-gray); }
+        #main-cta-btn.activating::after { content: ''; position: absolute; top: 0; left: 0; width: 10px; height: 100%; background: white; box-shadow: 0 0 20px 5px white; filter: blur(5px); animation: btn-scan 0.3s ease-out; }
+        @keyframes btn-scan { from { transform: translateX(-20px); } to { transform: translateX(500px); } }
+        @keyframes cta-thump { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.05); } }
+        .cta-unlocked-thump { animation: cta-thump 0.3s ease-in-out; }
     </style>
 </head>
-<body class="min-h-screen">
-    <canvas id="mouse-trail-canvas"></canvas>
-    <div id="app" class="min-h-screen p-4 sm:p-6 lg:p-8 flex flex-col items-center">
-        <svg width="0" height="0" class="absolute">
-            <defs>
-                <linearGradient id="shimmer-gradient-1" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#c9a227" /><stop offset="50%" stop-color="#e76f51" /><stop offset="100%" stop-color="#c9a227" /></linearGradient>
-                <linearGradient id="shimmer-gradient-2" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#c9a227" /><stop offset="50%" stop-color="#7b2cbf" /><stop offset="100%" stop-color="#c9a227" /></linearGradient>
-                <linearGradient id="shimmer-gradient-3" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#c9a227" /><stop offset="50%" stop-color="#188f83" /><stop offset="100%" stop-color="#c9a227" /></linearGradient>
-            </defs>
-        </svg>
+<body class="flex items-center justify-center min-h-screen p-4 sm:p-6 md:p-8">
 
-        <div id="celebration-overlay" class="fixed top-0 left-0 w-full h-full overflow-hidden z-50 pointer-events-none"></div>
-        <header class="w-full max-w-6xl text-center mb-6 flex flex-col items-center">
-            <img src="icon-512x512.png" alt="Sadhana Logo" class="h-28 w-28 rounded-full p-1 mb-4 object-cover"
-             onerror="this.onerror=null; this.src='https://placehold.co/112x112/100f14/f2e9e4?text=S&font=cinzel+decorative';">
-            <h1 class="font-cinzel-dec text-5xl sm:text-6xl text-primary title-glow tracking-widest">Sādhana</h1>
-            <p id="greeting" class="text-2xl mt-4 font-medium text-slate-300"></p>
-            <div class="my-4 space-y-2">
-                <p id="daily-quote" class="text-slate-400 text-lg max-w-2xl cursor-pointer min-h-[28px] flex items-center justify-center" title="Click to get new wisdom"></p>
-                <p id="core-virtues" class="text-sm text-secondary/70 tracking-widest"></p>
-            </div>
-        </header>
-        
-        <div class="w-full max-w-2xl p-3 mb-8 text-center flex flex-col gap-3">
-             <p id="daily-progress-text" class="text-sm text-slate-400 font-medium tracking-wider"></p>
-            <div class="w-full h-2 bg-black/20 rounded-full overflow-hidden border border-white/10">
-                <div id="daily-progress-bar" class="h-full transition-all duration-700 ease-out" style="width: 0%;"></div>
-            </div>
-        </div>
-
-        <main class="w-full max-w-7xl grid grid-cols-1 lg:grid-cols-3 gap-8">
-            <div class="lg:col-span-2 flex flex-col gap-8">
-                <section class="panel p-6">
-                    <h2 class="font-cinzel-dec text-2xl text-primary mb-4 text-center">Meditation Cycle</h2>
-                    <div class="flex flex-col md:flex-row items-center justify-around gap-6">
-                        <div class="orb-container relative w-[180px] h-[180px]">
-                            <svg viewBox="0 0 120 120" class="transform -rotate-90">
-                                <circle class="stroke-current text-white/10" cx="60" cy="60" r="54" fill="none" stroke-width="8" />
-                                <circle id="progress-circle" class="progress-circle-fg" cx="60" cy="60" r="54" pathLength="100" fill="none" stroke-width="8" stroke-linecap="round" />
-                            </svg>
-                            <div class="absolute inset-0 flex flex-col items-center justify-center text-center -mt-2">
-                                <div id="meditation-streak-day" class="font-black text-5xl text-primary leading-none">1</div>
-                                <div id="meditation-streak-unit" class="text-sm text-secondary">of 40 days</div>
-                            </div>
-                        </div>
-                        <div class="text-center flex flex-col items-center">
-                            <p id="meditation-time" class="text-6xl font-bold text-primary tracking-tight">12 min</p>
-                             <div class="mt-2 text-center">
-                                <p class="text-sm text-secondary">Journey to 270 min</p>
-                                <div id="starmap-container" class="starmap mt-2"></div>
-                                <p id="cycle-counter" class="text-xs text-secondary/70 mt-2"></p>
-                            </div>
-                        </div>
-                    </div>
-                </section>
-                <section class="panel p-2 sm:p-4">
-                    <h2 class="font-cinzel-dec text-2xl text-primary mb-2 px-2 sm:px-0">Daily Sādhana</h2>
-                    <div id="tasks-container" class="space-y-1"></div>
-                </section>
-            </div>
-            <aside class="lg:col-span-1 flex flex-col gap-8">
-                <section class="panel p-4">
-                    <h2 class="font-cinzel-dec text-2xl text-primary mb-4">Guiding Maryadas</h2>
-                    <div id="maryadas-container" class="space-y-2"></div>
-                </section>
-                <section class="panel p-4">
-                    <div class="calendar-header">
-                        <button id="prev-month-btn" class="calendar-nav">&lt; Prev</button>
-                        <h2 id="calendar-month-year" class="font-cinzel-dec text-2xl text-primary"></h2>
-                        <button id="next-month-btn" class="calendar-nav">Next &gt;</button>
-                    </div>
-                    <div class="calendar"></div>
-                </section>
-                <section class="panel p-4">
-                    <h2 class="font-cinzel-dec text-2xl text-primary mb-4">Logbook</h2>
-                    <div id="logbook-container" class="space-y-2"></div>
-                </section>
-            </aside>
-        </main>
-        
-        <footer class="w-full text-center mt-12">
-            <div id="date-display" class="text-secondary text-lg"></div>
-            <div id="time-display" class="text-sm text-secondary/70 tracking-widest"></div>
-        </footer>
+    <div id="scrolling-background">
+        <div class="background-overlay"></div>
     </div>
     
-    <div id="cycle-modal" class="fixed inset-0 modal-bg items-center justify-center flex hidden z-50">
-        <div class="modal-content w-full max-w-md m-4 p-8 text-center">
-            <h3 class="font-cinzel-dec text-3xl text-primary title-glow">Sādhana Deepens</h3>
-            <p class="text-lg mt-4 text-primary">You have completed a 40-day cycle. Your discipline bears fruit.</p>
-            <p id="cycle-modal-text" class="text-xl mt-2 text-primary font-bold"></p>
-            <button id="close-cycle-modal" class="bg-accent-gold text-bg font-bold py-2 px-6 rounded-md shadow-lg mt-8 hover:opacity-90 transition-all duration-300 transform hover:scale-105">Continue the Path</button>
+    <div id="exit-intent-modal" class="items-center justify-center">
         </div>
+
+    <div class="w-full max-w-3xl mx-auto main-content">
+        <div id="landing-page" class="text-center fade-in">
+            <h1 class="text-3xl sm:text-4xl md:text-5xl headline-font text-white leading-tight mb-4">The Dating App Industry is a <span class="accent-yellow">Rigged Game.</span></h1>
+            <p class="text-lg sm:text-xl text-gray-300 max-w-2xl mx-auto mb-8">This quiz exposes how they're designed to fail you... and reveals the one honest alternative they hope you never find.</p>
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-6 max-w-3xl mx-auto mb-10 text-left">
+                <div class="bg-gray-800/50 p-4 rounded-lg border border-gray-700"><h3 class="font-bold text-white">End Ghosting</h3><p class="text-gray-400 text-sm mt-1">Stop wasting time on conversations that go nowhere.</p></div>
+                <div class="bg-gray-800/50 p-4 rounded-lg border border-gray-700"><h3 class="font-bold text-white">Escape Invisibility</h3><p class="text-gray-400 text-sm mt-1">Get seen by high-quality matches instead of being buried.</p></div>
+                <div class="bg-gray-800/50 p-4 rounded-lg border border-gray-700"><h3 class="font-bold text-white">Reclaim Your Time</h3><p class="text-gray-400 text-sm mt-1">No more endless swiping. Get real results, efficiently.</p></div>
+            </div>
+            <button id="start-quiz-btn" class="accent-yellow-bg accent-yellow-bg-hover text-gray-900 font-bold text-lg sm:text-xl py-4 px-12 rounded-lg shadow-lg transition duration-300 transform hover:scale-105">TAKE THE QUIZ</button>
+            <p class="text-gray-500 text-sm mt-3">100% confidential & takes under 60 seconds.</p>
+        </div>
+
+        <div id="quiz-container" class="hidden max-w-2xl mx-auto">
+             <div class="flex justify-between text-xs sm:text-sm text-gray-400 mb-2 px-1"><span class="progress-step active">The Problem</span><span class="progress-step">Your Experience</span><span class="progress-step">The Verdict</span></div>
+             <div class="w-full bg-gray-700 rounded-full h-2.5 mb-6"><div id="progress-bar" class="accent-yellow-bg h-2.5 rounded-full" style="width: 10%; transition: width 0.5s ease-out;"></div></div>
+             <div id="quiz-content-container" class="quiz-container-glass p-6 md:p-8 rounded-lg shadow-2xl transition-all duration-1000">
+                 <div class="quiz-content-wrapper">
+                 </div>
+             </div>
+        </div>
+
+        <div id="loading-page" class="hidden text-center fade-in">
+             </div>
     </div>
-    <div id="toast" class="fixed bottom-8 right-8 p-4 transform translate-y-24 opacity-0 font-medium"></div>
 
-    <script>
-        // ===================================================================================
-        // SĀDHANA TRACKER v8.0 FINAL
-        // This version is a self-contained, offline-first Progressive Web App (PWA).
-        // All data is stored locally in the browser. No external database is needed.
-        // It includes fixes for all previously identified bugs and new features like
-        // a monthly calendar view and a cycle logbook.
-        // ===================================================================================
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const page = { landing: document.getElementById('landing-page'), quiz: document.getElementById('quiz-container'), loading: document.getElementById('loading-page'), startBtn: document.getElementById('start-quiz-btn'), quizContentWrapper: document.querySelector('.quiz-content-wrapper'), quizContentContainer: document.getElementById('quiz-content-container'), progressBar: document.getElementById('progress-bar'), exitModal: document.getElementById('exit-intent-modal'), modalCountdown: document.getElementById('modal-countdown'), resumeBtn: document.getElementById('resume-button'), checkList: document.getElementById('check-list'), loadingName: document.getElementById('loading-name'), };
+        const quizData = [ { question: "When you use dating apps, what's the one feeling that hits you the hardest?", options: ["Invisible - like I don't even exist.", "Frustrated - by the endless, pointless swiping.", "Hopeless - that I'll ever meet someone real."] }, { question: "And what's the single biggest result of that feeling for you?", options: ["Getting zero matches for weeks.", "Conversations that are ghosted instantly.", "Realizing I've wasted hours of my life."], key: 'frustration' }, { question: "Finally, do you believe these apps are designed for your success, or for their profit?", options: ["They are designed for my success.", "They are designed for their profit."] } ];
+        let currentQuestionIndex = 0, userAnswers = {}, timerInterval, exitIntentShown = false, originalTitle = document.title, tabFlashInterval;
 
-        // --- GLOBAL STATE & CONFIGURATION ---
-        let userProfile = {};
-        let dailyTasks = {};
-        let calendarDate = new Date();
-        const USER_NAME = "Abbsar Bhat";
-
-        // --- CORE DATA MANAGEMENT (LOCALSTORAGE) ---
-
-        /**
-         * Loads all user data from the browser's local storage.
-         * Also handles migrating data from older versions of the app.
-         */
-        function loadDataFromLocal() {
-            const profileJSON = localStorage.getItem('sadhanaProfile');
-            if (profileJSON) {
-                userProfile = JSON.parse(profileJSON);
-                // Convert stored date strings back into proper Date objects for calculations.
-                if (userProfile.sadhanaStartDate) userProfile.sadhanaStartDate = new Date(userProfile.sadhanaStartDate);
-                if (userProfile.lastCycleNotification) userProfile.lastCycleNotification = new Date(userProfile.lastCycleNotification);
-                if (userProfile.cycleHistory) {
-                    userProfile.cycleHistory.forEach(item => item.endDate = new Date(item.endDate));
-                }
-            }
-            const tasksJSON = localStorage.getItem('dailyTasks');
-            if (tasksJSON) {
-                dailyTasks = JSON.parse(tasksJSON);
-                // This is a simple data migration for a previous app version.
-                // It converts the old format (string) to the new format (array of strings).
-                for (const taskId in dailyTasks) {
-                    if (dailyTasks[taskId] && typeof dailyTasks[taskId].lastCompleted === 'string') {
-                        dailyTasks[taskId] = [dailyTasks[taskId].lastCompleted];
-                    }
-                }
-            }
-        }
-
-        /**
-         * Saves the current state of userProfile and dailyTasks to local storage.
-         */
-        function saveDataToLocal() {
-            localStorage.setItem('sadhanaProfile', JSON.stringify(userProfile));
-            localStorage.setItem('dailyTasks', JSON.stringify(dailyTasks));
-        }
-
-        // --- APPLICATION CONSTANTS ---
-
-        const QUOTES = ["What you think, you become.", "Thoughts, Emotions, Vasanas, Tendcies are of MInd Igone Dont Energize", "Your task is not to seek for love, but merely to seek and find all the barriers within yourself that you have built against it.", "Pain of Discipline is Better"];
-        const ENCOURAGEMENTS = ["Path cleared.", "Onward.", "Discipline is freedom.", "Energy focused.", "Done.", "Ascending."];
-        const ICONS = {
-            Bhoomi: `<svg class="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 17l10-4 10 4M2 12l10-4 10 4M6 20v-6l6-3 6 3v6M12 2v6"/></svg>`, Narayani: `<svg class="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="M12 14a4 4 0 100-8 4 4 0 000 8z"/></svg>`, Annapurneshwari: `<svg class="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="3"/><path d="M4 12H2m10 10v-2m-2-8l-2-2m10 0l2-2m-2 10l2 2m-10-8l-2 2m10 0l2 2"/></svg>`, Rashmi: `<svg class="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="5"/><path d="M12 1v2m0 18v2M4.22 4.22l1.42 1.42m12.72 12.72l1.42 1.42M1 12h2m18 0h2M4.22 19.78l1.42-1.42M18.34 5.66l1.42-1.42"/></svg>`, Swapneshwari: `<svg class="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/></svg>`, Parvati: `<svg class="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/></svg>`, Kali: `<svg class="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>`, meditation: `<svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M9 18L6 21M15 18l3 3M2 11l4-1 4 1 4-1 4 1 4-1M4 7l3 3 3-3 3 3 3-3"/></svg>`, mahalaxmi: `<svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>`, tantra: `<svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="5" r="3"/><circle cx="12" cy="19" r="3"/><path d="M12 8v8"/></svg>`, yoga: `<svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M14.5 21a2.5 2.5 0 01-5 0"/></svg>`, study: `<svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M4 19.5A2.5 2.5 0 016.5 17H20v2H6.5a2.5 2.5 0 01-2.5-2.5v-10A2.5 2.5 0 016.5 2H20v13.5a1.5 1.5 0 01-1.5 1.5H10.5a1.5 1.5 0 01-1.5-1.5V2"/></svg>`, work: `<svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"/><path d="M16 21V5a2 2 0 00-2-2h-4a2 2 0 00-2 2v16"/></svg>`, courses: `<svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 3h6a4 4 0 014 4v14a3 3 0 00-3-3H2z"/><path d="M22 3h-6a4 4 0 00-4 4v14a3 3 0 013-3h7z"/></svg>`, video: `<svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="m22 8-6 4 6 4V8Z"/><rect x="2" y="6" width="14" height="12" rx="2" ry="2"/></svg>`, math: `<svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="4" y="2" width="16" height="20" rx="2" ry="2"/><path d="M8 8h.01M12 8h.01M16 8h.01M8 12h.01M12 12h.01M16 12h.01M8 16h8"/></svg>`,
-        };
-        const MARYADAS = [{ name: "Bhoomi Devi", icon: ICONS.Bhoomi, principle: "Connect with Earth" }, { name: "Narayani Devi", icon: ICONS.Narayani, principle: "Hydrate with charged water 4L" }, { name: "Annapurneshwari", icon: ICONS.Annapurneshwari, principle: "Eat sunrise to sunset" }, { name: "Rashmi Devi", icon: ICONS.Rashmi, principle: "Embrace natural light 60:10" }, { name: "Swapneshwari Devi", icon: ICONS.Swapneshwari, principle: "Sleep and wake naturally HS:FN" }, { name: "Parvati Devi", icon: ICONS.Parvati, principle: "Expose to Cold" }, { name: "Kali Devi", icon: ICONS.Kali, principle: "Cultivate spacious time" },];
-        const SADHANA_TASKS = [ { id: 'meditation', name: 'Meditation', icon: ICONS.meditation, group: '4:00 - 7:00' }, { id: 'mahalaxmi', name: 'Maha Lakshmi Sadhana', icon: ICONS.mahalaxmi, group: '4:00 - 7:00' }, { id: 'tantra', name: 'Tantra Sadhana', icon: ICONS.tantra, group: '4:00 - 7:00' }, { id: 'yoga', name: 'Yoga', icon: ICONS.yoga, group: '4:00 - 7:00' }, { id: 'study_video', name: 'Study: Video (1hr)', icon: ICONS.video, group: '7:00 - 15:00' }, { id: 'study_book', name: 'Study: Book (30min)', icon: ICONS.study, group: '7:00 - 15:00' }, { id: 'study_math', name: 'Study: Math (30min)', icon: ICONS.math, group: '7:00 - 15:00' }, { id: 'work', name: 'Work (6 hours)', icon: ICONS.work, group: '7:00 - 15:00' }, { id: 'courses', name: 'Om Swami Course / Books', icon: ICONS.courses, group: 'Floating Tasks' }, ];
-
-        // --- RENDER & UPDATE FUNCTIONS ---
-
-        /**
-         * Calculates and displays the state of the main meditation cycle orb.
-         * This includes daily progress, total time, and cycle completion logging.
-         */
-        function updateMeditationTracker() {
-            const startDate = userProfile.sadhanaStartDate;
-            if (!startDate) return;
-
-            const today = new Date();
-            today.setHours(0, 0, 0, 0);
-            
-            const daysPassed = Math.floor((today - startDate) / (1000 * 60 * 60 * 24));
-            
-            const cyclesCompleted = Math.floor(daysPassed / 40);
-            
-            // Log any newly completed cycles to the Logbook
-            const lastKnownCycleCount = userProfile.cycleHistory?.length || 0;
-            if (cyclesCompleted > lastKnownCycleCount) {
-                userProfile.cycleHistory = userProfile.cycleHistory || [];
-                for (let i = lastKnownCycleCount; i < cyclesCompleted; i++) {
-                    const cycleEndDate = new Date(startDate);
-                    cycleEndDate.setDate(cycleEndDate.getDate() + (i + 1) * 40 - 1);
-                    userProfile.cycleHistory.push({ cycleNumber: i + 1, endDate: cycleEndDate });
-                }
-                renderLogbook();
-                saveDataToLocal();
-            }
-            
-            const dayInCurrentCycle = daysPassed % 40;
-            const currentMeditationTime = 12 + (cyclesCompleted * 6); // Starts at 12, adds 6 per cycle
-            const TOTAL_CYCLES_TO_GOAL = 43; // It takes 43 increments of 6min to reach the goal
-
-            document.getElementById('meditation-time').textContent = `${currentMeditationTime} min`;
-            document.getElementById('meditation-streak-day').textContent = `${dayInCurrentCycle + 1}`;
-            document.getElementById('cycle-counter').textContent = `Cycle ${cyclesCompleted + 1} of ${TOTAL_CYCLES_TO_GOAL + 1}`;
-            
-            const progressPercent = ((dayInCurrentCycle + 1) / 40) * 100;
-            document.getElementById('progress-circle').style.strokeDashoffset = 100 - progressPercent;
-
-            const starmap = document.getElementById('starmap-container');
-            starmap.querySelectorAll('.star').forEach((star, index) => {
-                star.classList.toggle('lit', index < cyclesCompleted);
-            });
-            
-            // Show modal on the first day of a new cycle
-            if (dayInCurrentCycle === 0 && daysPassed > 0) {
-                const lastNotification = userProfile.lastCycleNotification;
-                if (!lastNotification || lastNotification.toDateString() !== today.toDateString()) {
-                    showCycleModal(currentMeditationTime);
-                    userProfile.lastCycleNotification = today;
-                    saveDataToLocal();
-                }
-            }
-        }
-
-        /**
-         * Renders the main list of daily checkable tasks.
-         */
-        function renderTasks() {
-            const container = document.getElementById('tasks-container'); container.innerHTML = '';
-            const todayStr = new Date().toDateString();
-            const groupedTasks = SADHANA_TASKS.reduce((acc, task) => { (acc[task.group] = acc[task.group] || []).push(task); return acc; }, {});
-            let completedCount = 0; let animationDelay = 0;
-            for (const group in groupedTasks) {
-                const groupEl = document.createElement('div');
-                groupEl.innerHTML = `<h3 class="font-cinzel-dec text-primary text-lg mt-4 mb-2 px-2 sm:px-0 tracking-wider">${group}</h3>`;
-                const taskListEl = document.createElement('div');
-                groupedTasks[group].forEach(taskInfo => {
-                    const history = dailyTasks[taskInfo.id] || [];
-                    const isCompleted = history.some(dateStr => new Date(dateStr).toDateString() === todayStr);
-                    if(isCompleted) completedCount++;
-                    const taskEl = document.createElement('div');
-                    taskEl.className = `task-item p-3 flex items-center justify-between cursor-pointer ${isCompleted ? 'completed' : ''}`;
-                    taskEl.style.animationDelay = `${animationDelay}ms`; animationDelay += 40;
-                    taskEl.innerHTML = `
-                        <div class="flex items-center gap-4 pl-2"> <div class="text-secondary">${taskInfo.icon}</div> <span class="task-name text-base text-primary">${taskInfo.name}</span> </div>
-                        <div class="checkbox-custom mr-2 flex items-center justify-center"> <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg> </div>`;
-                    taskEl.addEventListener('click', () => toggleTaskCompletion(taskInfo.id, isCompleted));
-                    taskListEl.appendChild(taskEl);
-                });
-                groupEl.appendChild(taskListEl);
-                container.appendChild(groupEl);
-            }
-            updateDailyProgress(completedCount, SADHANA_TASKS.length);
-        }
+        function typewriter(element, text, speed = 30) { let i = 0; element.innerHTML = ""; const typing = setInterval(() => { if (i < text.length) { element.innerHTML += text.charAt(i); i++; } else { clearInterval(typing); element.classList.remove('typewriter-text'); } }, speed); }
         
-        /**
-         * Handles the logic for checking or unchecking a task.
-         * @param {string} taskId - The ID of the task being toggled.
-         * @param {boolean} isCompleted - The current completion state of the task.
-         */
-        function toggleTaskCompletion(taskId, isCompleted) {
-            try { playSound(isCompleted ? 'click' : 'complete'); } catch (e) { console.error("Audio failed to play:", e); }
-            const todayISO = new Date().toISOString().split('T')[0];
-            const history = dailyTasks[taskId] || [];
-            if (!isCompleted) {
-                showToast(ENCOURAGEMENTS[Math.floor(Math.random() * ENCOURAGEMENTS.length)]);
-                dailyTasks[taskId] = [...history, new Date().toISOString()];
-            } else {
-                dailyTasks[taskId] = history.filter(d => new Date(d).toISOString().split('T')[0] !== todayISO);
-            }
-            saveDataToLocal(); 
-            renderTasks(); 
-            renderCalendarView();
-        }
-
-        /**
-         * Renders the interactive monthly calendar view.
-         */
-        function renderCalendarView() {
-            const calendarEl = document.querySelector('.calendar');
-            const monthYearEl = document.getElementById('calendar-month-year');
-            if(!calendarEl || !monthYearEl) return;
-            calendarEl.innerHTML = '';
-            monthYearEl.textContent = calendarDate.toLocaleDateString('en-us', {month: 'long', year: 'numeric'});
-            const month = calendarDate.getMonth();
-            const year = calendarDate.getFullYear();
-            const firstDayOfMonth = new Date(year, month, 1).getDay();
-            const daysInMonth = new Date(year, month + 1, 0).getDate();
-
-            for(let i = 0; i < firstDayOfMonth; i++) {
-                calendarEl.appendChild(document.createElement('div'));
-            }
-
-            for(let i = 1; i <= daysInMonth; i++) {
-                const day = new Date(year, month, i);
-                const dayStr = day.toDateString();
-                const todayStr = new Date().toDateString();
-                let completedCount = 0;
-                for(const taskId in dailyTasks) {
-                    if(dailyTasks[taskId]?.some(d => new Date(d).toDateString() === dayStr)) {
-                        completedCount++;
-                    }
-                }
-                const percentage = SADHANA_TASKS.length > 0 ? (completedCount / SADHANA_TASKS.length) * 100 : 0;
-                let statusClass = '';
-                if(percentage === 100) statusClass = 'perfect';
-                else if(percentage >= 50) statusClass = 'good';
-                if(dayStr === todayStr) statusClass += ' today';
-                
-                const dayEl = document.createElement('div');
-                dayEl.className = `calendar-day ${statusClass}`;
-                dayEl.textContent = i;
-                calendarEl.appendChild(dayEl);
-            }
-        }
-
-        /**
-         * Renders the list of completed 40-day cycles.
-         */
-        function renderLogbook() {
-            const container = document.getElementById('logbook-container');
-            if (!container) return;
-            container.innerHTML = '';
-            const history = userProfile.cycleHistory || [];
-            if(history.length === 0) {
-                container.innerHTML = `<p class="text-sm text-secondary">No cycles completed yet.</p>`;
-                return;
-            }
-            history.forEach(item => {
-                const entryEl = document.createElement('div');
-                entryEl.className = 'logbook-entry';
-                entryEl.textContent = `Cycle ${item.cycleNumber} completed on ${item.endDate.toLocaleDateString()}`;
-                container.appendChild(entryEl);
+        function startQuiz() {
+            page.landing.style.display = 'none';
+            page.quiz.style.display = 'block';
+            const backgroundEl = document.getElementById('scrolling-background');
+            if (backgroundEl) backgroundEl.style.display = 'none';
+            let questionHTML = '';
+            quizData.forEach((q, index) => {
+                const options = q.options.map((opt, optIndex) => `<div class="quiz-option border-2 border-gray-600 rounded-lg p-4 mb-4 cursor-pointer text-base sm:text-lg" onclick="selectAnswer(${index}, ${optIndex})">${opt}</div>`).join('');
+                questionHTML += `<div class="quiz-question-container" data-question="${index}"><h2 class="text-xl sm:text-2xl md:text-3xl font-bold mb-6 typewriter-text"></h2><div class="options-container fade-in" style="animation-delay: 0.5s;">${options}</div></div>`;
             });
+            page.quizContentWrapper.innerHTML = questionHTML;
+            showQuestion(0);
         }
+
+        window.selectAnswer = function(qIndex, oIndex) { const questionContainer = page.quizContentWrapper.querySelector(`[data-question="${qIndex}"]`); const optionsContainer = questionContainer.querySelector('.options-container'); optionsContainer.querySelectorAll('.quiz-option')[oIndex].classList.add('selected'); optionsContainer.classList.add('selection-made'); const question = quizData[qIndex]; const answer = question.options[oIndex]; if (question.key) userAnswers[question.key] = answer; else userAnswers[qIndex] = answer; currentQuestionIndex++; updateProgressBar(); setTimeout(() => { questionContainer.classList.add('slide-out'); questionContainer.classList.remove('active'); if (currentQuestionIndex < quizData.length) { showQuestion(currentQuestionIndex); } else { setTimeout(renderOptInForm, 400); } }, 300); }
+        function showQuestion(index) { const questionToShow = page.quizContentWrapper.querySelector(`[data-question="${index}"]`); if (questionToShow) { questionToShow.classList.add('active'); const questionText = quizData[index].question; const h2 = questionToShow.querySelector('h2'); typewriter(h2, questionText); } }
+        function updateProgressBar() { const progressPercentage = (currentQuestionIndex / quizData.length) * 100; page.progressBar.style.width = `${progressPercentage}%`; page.quiz.querySelectorAll('.progress-step').forEach((step, index) => { step.classList.toggle('active', currentQuestionIndex > index); }); }
         
-        /**
-         * Updates the daily progress bar at the top of the page.
-         * @param {number} completed - Number of tasks completed today.
-         * @param {number} total - Total number of tasks.
-         */
-        function updateDailyProgress(completed, total) {
-            const percentage = total > 0 ? (completed / total) * 100 : 0;
-            document.getElementById('daily-progress-bar').style.width = `${percentage}%`;
-            document.getElementById('daily-progress-text').textContent = `${completed} of ${total} tasks complete.`;
-            if (percentage === 100 && !document.body.dataset.celebratedToday) {
-                showToast("Sādhana complete. Om Tat Sat.");
-                triggerCelebration(); document.body.dataset.celebratedToday = 'true';
-            }
-        }
-        
-        // --- UI & UTILITY FUNCTIONS ---
-        let sounds = {};
-        function playSound(type = 'click') {
-            if (Object.keys(sounds).length === 0) {
-                if(typeof Tone === 'undefined') return;
-                Tone.start();
-                sounds.click = new Tone.Synth({ oscillator: { type: 'sine' }, envelope: { attack: 0.005, decay: 0.1, sustain: 0, release: 0.1 } }).toDestination(); sounds.click.volume.value = -24;
-                sounds.complete = new Tone.PluckSynth({ attackNoise: 0.5, dampening: 6000, resonance: 0.95 }).toDestination(); sounds.complete.volume.value = -12;
-            }
-            if(type === 'complete' && sounds.complete) sounds.complete.triggerAttack("G4", Tone.now());
-            else if(sounds.click) sounds.click.triggerAttackRelease("C6", "32n", Tone.now());
-        }
-
-        function showToast(message) {
-            const toast = document.getElementById('toast'); toast.textContent = message;
-            toast.classList.add('show'); setTimeout(() => toast.classList.remove('show'), 3000);
-        }
-
-        function triggerCelebration() {
-            const overlay = document.getElementById('celebration-overlay'); if (overlay.children.length > 0) return;
-            for (let i = 0; i < 50; i++) {
-                const c = document.createElement('div'); c.className = 'confetti';
-                c.style.left = `${Math.random() * 100}vw`; c.style.animationDelay = `${Math.random() * 3}s`;
-                c.style.transform = `scale(${Math.random() * 0.5 + 0.5})`;
-                overlay.appendChild(c);
-            }
-            setTimeout(() => { overlay.innerHTML = ''; }, 5000);
-        }
-
-        const cycleModal = document.getElementById('cycle-modal');
-        function showCycleModal(newTime) {
-            document.getElementById('cycle-modal-text').textContent = `Your practice now elevates to ${newTime} minutes daily.`;
-            cycleModal.classList.remove('hidden');
-        }
-        document.getElementById('close-cycle-modal').addEventListener('click', () => cycleModal.classList.add('hidden'));
-
-        function updateClock() {
-            const now = new Date();
-            document.getElementById('time-display').textContent = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
-            const currentDate = now.toLocaleDateString([], { weekday: 'long', month: 'long', day: 'numeric' });
-            const displayedDate = document.getElementById('date-display').textContent;
+        function renderOptInForm() {
+            page.progressBar.style.width = `100%`;
+            page.quiz.querySelector('.progress-step:last-child').classList.add('active');
+            page.quizContentWrapper.innerHTML = '';
+            let personalizedHeadline = "Your Results Are Ready.";
+            if (userAnswers.frustration) { if (userAnswers.frustration.includes("zero matches")) personalizedHeadline = "We Found the Solution to Getting More Matches."; else if (userAnswers.frustration.includes("ghosted")) personalizedHeadline = "We Found the Fix for Ghosting."; else if (userAnswers.frustration.includes("wasted hours")) personalizedHeadline = "We Found a Way to Stop Wasting Your Time."; }
             
-            if (displayedDate !== "" && displayedDate !== currentDate) {
-                document.body.removeAttribute('data-celebratedToday');
-                renderTasks(); renderCalendarView();
-            }
-            document.getElementById('date-display').textContent = currentDate;
-            updateGreeting(); // Keep greeting updated continuously
+            // --- TWEAKED HTML with better spacing ---
+            const optInHTML = `
+                <div class="text-center fade-in">
+                    <div class="relative w-40 h-40 md:w-48 md:h-48 mx-auto mb-4">
+                        <svg class="w-full h-full" viewBox="0 0 100 100"><circle class="timer-gauge-bg" cx="50" cy="50" r="45" stroke-width="8" fill="none"></circle><circle id="timer-gauge-fg" class="timer-gauge-fg" cx="50" cy="50" r="45" stroke-width="8" fill="none"></circle></svg>
+                        <div id="countdown-timer" class="timer-text absolute top-0 left-0 w-full h-full flex items-center justify-center text-4xl md:text-5xl headline-font transition-colors duration-500">05:00</div>
+                    </div>
+                    <h2 class="text-xl sm:text-2xl md:text-3xl font-bold accent-yellow mb-2">${personalizedHeadline}</h2>
+                    <p class="text-base sm:text-lg text-gray-300 mb-8">Your access is reserved for the time on the clock. After that, your spot will be given away.</p>
+                    
+                    <div class="max-w-md mx-auto space-y-5">
+                        <div class="bg-gray-900/50 border border-gray-700 rounded-lg p-4 space-y-3">
+                            <div class="text-left text-sm"><div class="flex items-center"><svg class="w-5 h-5 text-green-400 mr-3 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg><div><span class="text-gray-400">Analysis Complete:</span> <strong id="analysis-result" class="text-white typewriter-text"></strong></div></div></div>
+                            <div class="border-t border-gray-700"></div>
+                            <div class="text-left text-sm"><div class="flex items-center"><span class="text-gray-400 mr-3">SYSTEM STATUS: <span class="text-red-500 font-bold">LIVE</span></span><div id="visual-scarcity-container" class="flex items-center gap-2"></div></div><div id="social-proof-container" class="text-xs text-gray-400 h-4 mt-1"></div></div>
+                        </div>
+
+                        <form id="optin-form" class="w-full" novalidate>
+                            <div class="space-y-3">
+                                <div class="relative"><input type="text" id="first-name" placeholder="Enter your first name" class="w-full p-4 bg-gray-800 border-2 border-gray-700 rounded-lg text-white text-lg transition-all duration-300 interactive-input" required><small class="text-red-400 text-xs absolute -bottom-5 left-1 opacity-0 transition-opacity"></small></div>
+                                <div class="relative flex items-center"><input type="email" id="email" placeholder="Enter your best email address" class="w-full p-4 bg-gray-800 border-2 border-gray-700 rounded-lg text-white text-lg transition-all duration-300 interactive-input" required><div class="group relative ml-2"><svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path></svg><div class="absolute bottom-full mb-2 -left-1/2 -translate-x-1/4 w-48 bg-black text-white text-xs rounded py-1 px-2 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none">100% secure. We will never share your email.<svg class="absolute text-black h-2 w-full left-0 top-full" x="0px" y="0px" viewBox="0 0 255 255"><polygon class="fill-current" points="0,0 127.5,127.5 255,0"></svg></div></div></div><small id="email-error" class="text-red-400 text-xs text-left -mt-3 mb-2 block h-4 opacity-0 transition-opacity"></small>
+                            </div>
+                            <div id="commitment-slider-container" class="w-full bg-gray-700 rounded-full p-1 my-6 relative h-12 flex items-center commitment-slider-container"><div id="commitment-slider-thumb" class="w-24 h-10 bg-gray-500 rounded-full flex items-center justify-center cursor-pointer transition-all duration-300 commitment-slider-thumb"><svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg></div><span id="commitment-slider-text" class="absolute left-1/2 -translate-x-1/2 text-gray-400 text-sm pointer-events-none">Slide to Commit</span></div>
+                            <button type="submit" id="main-cta-btn" class="w-full accent-yellow-bg accent-yellow-bg-hover text-gray-900 py-3 px-10 rounded-lg transition-colors cta-glow relative overflow-hidden">
+                                <span class="text-xl font-bold">UNLOCK INSTANT ACCESS</span>
+                            </button>
+                        </form>
+                    </div>
+                </div>`;
+            page.quizContentWrapper.innerHTML = optInHTML;
+            typewriter(document.getElementById('analysis-result'), userAnswers.frustration || 'Your Experience', 40);
+            startUrgencySequence(5 * 60);
+            document.getElementById('optin-form').addEventListener('submit', handleFormSubmit);
+            activateCommitmentSlider();
         }
+        function activateCommitmentSlider() {
+            const slider = document.getElementById('commitment-slider-container'); const thumb = document.getElementById('commitment-slider-thumb'); const ctaBtn = document.getElementById('main-cta-btn'); if (!slider || !thumb || !ctaBtn) return; ctaBtn.disabled = true; let isDragging = false; const startDrag = (e) => { isDragging = true; }; const endDrag = (e) => { if(!isDragging) return; isDragging = false; const sliderRect = slider.getBoundingClientRect(); const thumbRect = thumb.getBoundingClientRect(); if (thumbRect.right > sliderRect.right - 20) { thumb.style.left = `${sliderRect.width - thumb.offsetWidth - 4}px`; thumb.classList.add('unlocked'); document.getElementById('commitment-slider-text').style.opacity = '0'; thumb.innerHTML = `<svg class="w-6 h-6 text-black" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>`; ctaBtn.classList.add('activating'); setTimeout(() => { ctaBtn.disabled = false; ctaBtn.classList.remove('activating'); ctaBtn.classList.add('cta-unlocked-thump'); setTimeout(()=> ctaBtn.classList.remove('cta-unlocked-thump'), 300); }, 300); } else { thumb.style.left = '4px'; } }; const onDrag = (e) => { if (!isDragging) return; e.preventDefault(); const clientX = e.touches ? e.touches[0].clientX : e.clientX; const sliderRect = slider.getBoundingClientRect(); let newLeft = clientX - sliderRect.left - (thumb.offsetWidth / 2); if (newLeft < 4) newLeft = 4; if (newLeft > sliderRect.width - thumb.offsetWidth - 4) newLeft = sliderRect.width - thumb.offsetWidth - 4; thumb.style.left = `${newLeft}px`; }; thumb.addEventListener('mousedown', startDrag); thumb.addEventListener('touchstart', startDrag, {passive: true}); document.addEventListener('mouseup', endDrag); document.addEventListener('touchend', endDrag); document.addEventListener('mousemove', onDrag); document.addEventListener('touchmove', onDrag, {passive: false});
+        }
+        function startUrgencySequence(totalDuration) {
+            const timerEl = document.getElementById('countdown-timer'); const gaugeFgEl = document.getElementById('timer-gauge-fg'); const scarcityContainer = document.getElementById('visual-scarcity-container'); const socialProofEl = document.getElementById('social-proof-container'); const ctaBtn = document.getElementById('main-cta-btn'); if(!gaugeFgEl) return; const radius = gaugeFgEl.r.baseVal.value; const circumference = 2 * Math.PI * radius; gaugeFgEl.style.strokeDasharray = circumference; gaugeFgEl.style.strokeDashoffset = 0; const totalSpots = 7, spotsToTake = 5; const locations = ["California", "Texas", "New York", "Florida", "Ohio", "Illinois"];
+            for (let i = 0; i < totalSpots; i++) { scarcityContainer.innerHTML += `<div class="spot available" data-spot-id="${i}"><svg class="w-4 h-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd" /></svg></div>`; }
+            const spots = Array.from(scarcityContainer.children);
+            // --- TWEAKED PACING ---
+            const takeSpot = (spotIndex) => { const spotToTake = spots[spotIndex]; if (!spotToTake) return; spotToTake.classList.add('flickering'); setTimeout(() => { spotToTake.classList.remove('available', 'flickering'); spotToTake.classList.add('taken'); socialProofEl.innerHTML = `<p class="social-proof-text opacity-0">Access claimed by user in ${locations[spotIndex % locations.length]}</p>`; setTimeout(() => { if(socialProofEl.querySelector('p')) socialProofEl.querySelector('p').style.opacity = 1; }, 50); setTimeout(() => { if(socialProofEl.querySelector('p')) socialProofEl.querySelector('p').style.opacity = 0; }, 2800); }, 400); };
+            for (let i = 0; i < spotsToTake; i++) { setTimeout(() => takeSpot(i), 3000 + i * 2200); } // Slower start and interval
+            let duration = totalDuration; timerInterval = setInterval(() => { duration--; const minutes = String(Math.floor(duration / 60)).padStart(2, '0'); const seconds = String(duration % 60).padStart(2, '0'); const timeString = `${minutes}:${seconds}`; if (timerEl) timerEl.textContent = timeString; if (page.modalCountdown) page.modalCountdown.textContent = timeString; const progress = duration / totalDuration; gaugeFgEl.style.strokeDashoffset = circumference * (1 - progress); if (duration < 60) { if (timerEl) timerEl.classList.add('urgent'); if (gaugeFgEl) gaugeFgEl.classList.add('urgent'); if (page.quizContentContainer) page.quizContentContainer.classList.add('optin-container-urgent'); } if (duration < 30) { if (page.quizContentContainer) { page.quizContentContainer.classList.add('vignette-effect', 'glitch-active'); } } if (ctaBtn && !ctaBtn.disabled) ctaBtn.style.animationDuration = `${Math.max(0.5, 2.5 * progress)}s`; if (duration <= 0) { stopAllTimers(); if (timerEl) timerEl.parentElement.innerHTML = `<div class="text-3xl font-bold text-red-500 flex items-center justify-center h-full">TIME<br>EXPIRED</div>`; if (page.quizContentContainer) page.quizContentContainer.classList.add('optin-container-urgent'); } }, 1000);
+        }
+        function handleFormSubmit(e) {
+            e.preventDefault(); const form = e.target; const nameInput = form.querySelector('#first-name'); const emailInput = form.querySelector('#email'); const ctaBtn = form.querySelector('#main-cta-btn'); let isValid = true;
+            const validateInput = (input, message, errorElId = null) => { const errorEl = errorElId ? document.getElementById(errorElId) : input.closest('.relative').querySelector('small'); const parent = input.closest('.relative'); if (!input.value.trim() || (input.type === 'email' && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(input.value))) { if(parent) parent.classList.add('form-error-shake'); if(errorEl) { errorEl.textContent = message; errorEl.style.opacity = '1'; } setTimeout(() => parent.classList.remove('form-error-shake'), 500); return false; } if(errorEl) errorEl.style.opacity = '0'; return true; };
+            isValid = validateInput(nameInput, "First name is required.") && isValid;
+            isValid = validateInput(emailInput, "A valid email is required.", 'email-error') && isValid;
+            if (ctaBtn.disabled) { const slider = document.getElementById('commitment-slider-container'); if(slider) { slider.classList.add('form-error-shake'); setTimeout(()=>slider.classList.remove('form-error-shake'), 500); } isValid = false; }
+            if (!isValid) return;
+            stopAllTimers(); userAnswers.firstName = nameInput.value; userAnswers.email = emailInput.value; console.log('High-Quality Lead Captured:', userAnswers); page.quiz.style.display = 'none'; page.loading.style.display = 'block'; startLoadingSequence(userAnswers.firstName);
+        }
+        function stopAllTimers() { clearInterval(timerInterval); clearInterval(tabFlashInterval); document.title = originalTitle; }
+        function handleExitIntent(e) { if (!exitIntentShown && e.clientY <= 0) { exitIntentShown = true; page.exitModal.style.display = 'flex'; } }
+        function handleVisibilityChange() { if (document.hidden) { let i = 0; tabFlashInterval = setInterval(() => { document.title = (i++ % 2) ? originalTitle : "🔴 YOUR SPOT IS EXPIRING!"; }, 1000); } else { if (tabFlashInterval) stopAllTimers(); } }
+        function startLoadingSequence(name) { document.body.removeEventListener('mouseleave', handleExitIntent); page.loadingName.textContent = name; const checks = ["Verifying commitment status...", "Cross-referencing against 'Rigged Game' database...", "Securing your private access link...", "Confirming priority pass..."]; let i = 0; const checkInterval = setInterval(() => { if (i < checks.length) { page.checkList.innerHTML += `<div class="check-item flex items-center text-lg sm:text-xl fade-in"><svg class="w-6 h-6 text-green-400 mr-3 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg><span>${checks[i]}</span></div>`; i++; } else { clearInterval(checkInterval); setTimeout(triggerAutoRedirect, 500); } }, 1200); }
+        function triggerAutoRedirect() { const affiliateURL = `https://www.google.com/search?q=example+affiliate+offer&name=${encodeURIComponent(userAnswers.firstName)}&email=${encodeURIComponent(userAnswers.email)}`; page.checkList.innerHTML += `<div class="text-center mt-8 p-6 bg-gray-900/70 rounded-lg border-2 border-amber-400 fade-in"><p class="text-xl sm:text-2xl font-bold accent-yellow">ACCESS GRANTED!</p><p class="text-gray-300 mt-2 mb-6">${userAnswers.firstName}, your secure link is ready. You will be redirected automatically.</p><a href="${affiliateURL}" class="w-full sm:w-auto inline-block accent-yellow-bg accent-yellow-bg-hover text-gray-900 font-bold text-lg py-4 px-12 rounded-lg shadow-lg">TAKE ME THERE NOW</a><div id="redirect-countdown" class="text-gray-400 text-sm mt-4"></div></div>`; let countdown = 3; const countdownEl = document.getElementById('redirect-countdown'); const redirectInterval = setInterval(() => { countdownEl.textContent = `Redirecting in ${countdown}...`; if (--countdown < 0) { clearInterval(redirectInterval); window.location.href = affiliateURL; } }, 1000); }
         
-        function updateGreeting() {
-            const hours = new Date().getHours();
-            let greeting = "";
-            // This logic now correctly covers all 24 hours.
-            if (hours >= 4 && hours < 12) {
-                greeting = `Subha Prabhat, ${USER_NAME}`;
-            } else if (hours >= 12 && hours < 17) {
-                greeting = `Shubha Din, ${USER_NAME}`;
-            } else {
-                greeting = `Shubha Sandhya, ${USER_NAME}`;
-            }
-            const greetingEl = document.getElementById('greeting');
-            if (greetingEl.textContent !== greeting) {
-                greetingEl.textContent = greeting;
-            }
-        }
-
-        let quoteInterval;
-        function shuffleQuote(isAuto=false) { 
-            const quoteEl = document.getElementById('daily-quote');
-            if(!isAuto && quoteInterval) clearInterval(quoteInterval);
-            quoteEl.style.animation = 'none';
-            void quoteEl.offsetWidth; // Trigger reflow
-            quoteEl.style.animation = 'quote-fade-in 1.5s ease';
-            quoteEl.textContent = `"${QUOTES[Math.floor(Math.random() * QUOTES.length)]}"`;
-        }
-
-        function setupMouseTrail() {
-            const canvas = document.getElementById('mouse-trail-canvas');
-            const ctx = canvas.getContext('2d');
-            canvas.width = window.innerWidth; canvas.height = window.innerHeight;
-            let spots = []; let hue = 0;
-            const mouse = { x: undefined, y: undefined };
-            window.addEventListener('mousemove', function(event){
-                mouse.x = event.clientX; mouse.y = event.clientY;
-                for(let i = 0; i < 3; i++){
-                    spots.push({x: mouse.x, y: mouse.y, size: Math.random() * 2 + 1, speedX: Math.random() * 2 - 1, speedY: Math.random() * 2 - 1, color: 'hsl(' + hue + ', 100%, 70%)'});
-                }
-            });
-            function handleSpots(){
-                for(let i = 0; i < spots.length; i++){
-                    spots[i].x += spots[i].speedX; spots[i].y += spots[i].speedY;
-                    spots[i].size -= 0.05;
-                    if (spots[i].size > 0.1){
-                        ctx.beginPath(); ctx.arc(spots[i].x, spots[i].y, spots[i].size, 0, Math.PI * 2);
-                        ctx.fillStyle = spots[i].color; ctx.fill();
-                    } else { spots.splice(i, 1); i--;}
-                }
-            }
-            function animate() {
-                ctx.clearRect(0,0, canvas.width, canvas.height);
-                handleSpots(); hue+=0.5; requestAnimationFrame(animate);
-            }
-            animate();
-            window.addEventListener('resize', () => { canvas.width = window.innerWidth; canvas.height = window.innerHeight; });
-        }
-
-        /**
-         * The main function that starts the application.
-         */
-        function init() {
-            loadDataFromLocal();
-            // Set the start date only if it doesn't exist.
-            if (!userProfile.sadhanaStartDate) {
-                // CORRECTED: Set your specific start date here.
-                const startDate = new Date('2025-07-13T00:00:00'); 
-                userProfile.sadhanaStartDate = startDate;
-                saveDataToLocal();
-            }
-
-            // Setup Calendar navigation
-            document.getElementById('prev-month-btn').addEventListener('click', () => {
-                calendarDate.setMonth(calendarDate.getMonth() - 1);
-                renderCalendarView();
-            });
-            document.getElementById('next-month-btn').addEventListener('click', () => {
-                calendarDate.setMonth(calendarDate.getMonth() + 1);
-                renderCalendarView();
-            });
-
-            // Initial UI setup
-            const starmap = document.getElementById('starmap-container');
-            for(let i=0; i<43; i++) { // Corrected to 43 increments
-                const star = document.createElement('div'); star.className = 'star';
-                starmap.appendChild(star);
-            }
-            document.getElementById('core-virtues').innerHTML = `Truthfulness <span class="mx-2 text-secondary/50">&bull;</span> Compassion <span class="mx-2 text-secondary/50">&bull;</span> Detachment`;
-            document.getElementById('daily-quote').addEventListener('click', () => shuffleQuote(false));
-            const maryadasContainer = document.getElementById('maryadas-container');
-            maryadasContainer.innerHTML = MARYADAS.map(m => `
-                <div class="p-3 rounded-lg flex items-center gap-4 border border-transparent hover:bg-white/5 transition-colors">
-                    <div class="text-accent-gold">${m.icon}</div>
-                    <div> <p class="font-medium text-primary">${m.name}</p> <p class="text-sm text-secondary">${m.principle}</p> </div>
-                </div>`).join('');
-            
-            // Initial render of all components
-            updateClock();
-            renderTasks(); 
-            updateMeditationTracker(); 
-            renderCalendarView();
-            renderLogbook();
-            shuffleQuote(true);
-
-            // Setup intervals
-            setInterval(updateClock, 1000);
-            quoteInterval = setInterval(() => shuffleQuote(true), 20000);
-            
-            // Start visual effects
-            setupMouseTrail();
-        }
-        
-        // Run the application
-        init();
+        // Final setup calls
+        if (page.startBtn) page.startBtn.addEventListener('click', startQuiz);
+        if (page.resumeBtn) page.resumeBtn.addEventListener('click', () => { page.exitModal.style.display = 'none'; });
+    });
     </script>
 </body>
 </html>
