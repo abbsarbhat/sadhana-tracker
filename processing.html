@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Processing Your Access...</title>
+    <link id="favicon" rel="icon" href="favicon-32x32.png" type="image/x-icon">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --accent-green: #22C55E;
+        }
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #000000;
+            color: #E5E7EB;
+        }
+        #background-image {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-size: cover;
+            background-position: center center;
+            opacity: 0;
+            transition: opacity 1s ease-in-out;
+            z-index: 0;
+        }
+        #background-image::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(ellipse at center, rgba(0,0,0,0.4) 0%, rgba(0,0,0,0.9) 100%);
+        }
+        .content-wrapper {
+            position: relative;
+            z-index: 10;
+        }
+        
+        /* The checkmark animation */
+        .checkmark__path {
+            stroke-dasharray: 100; /* Will be set by JS */
+            stroke-dashoffset: 100; /* Will be set by JS */
+            animation: draw-checkmark 1.5s ease-out forwards;
+            animation-delay: 0.5s; /* Start drawing after a brief pause */
+        }
+        @keyframes draw-checkmark {
+            to {
+                stroke-dashoffset: 0;
+            }
+        }
+        .fade-in-slow {
+             animation: fade-in-slow 1s ease-out forwards;
+        }
+        @keyframes fade-in-slow {
+             from { opacity: 0; }
+             to { opacity: 1; }
+        }
+    </style>
+</head>
+<body class="flex items-center justify-center min-h-screen">
+
+    <div id="background-image" style="background-image: url('img.jpg');"></div>
+
+    <div class="content-wrapper text-center p-8">
+        
+        <h1 id="user-name" class="text-4xl sm:text-5xl md:text-6xl font-black text-white">
+            </h1>
+
+        <svg class="w-20 h-20 mx-auto my-4 opacity-0" style="animation: fade-in-slow 0.5s 0.3s forwards;" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+            <path class="checkmark__path" stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5" stroke="var(--accent-green)" />
+        </svg>
+
+        <p id="status-text" class="font-mono text-xl sm:text-2xl text-gray-400 transition-colors duration-300 h-8">
+            </p>
+    </div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // --- IMPORTANT: CONFIGURE YOUR LINKS AND FILES HERE ---
+        const affiliateURL = "https://YOUR_AFFILIATE_LINK_HERE.com";
+        const checkmarkFaviconPath = 'favicon-32x32.png';
+
+        // --- Get elements ---
+        const userNameEl = document.getElementById('user-name');
+        const statusTextEl = document.getElementById('status-text');
+        const checkmarkPathEl = document.querySelector('.checkmark__path');
+        const backgroundEl = document.getElementById('background-image');
+        const faviconEl = document.getElementById('favicon');
+
+        // --- Get URL parameters ---
+        const urlParams = new URLSearchParams(window.location.search);
+        const name = urlParams.get('name') || 'Guest';
+        const email = urlParams.get('email');
+        const capitalizedName = name.charAt(0).toUpperCase() + name.slice(1);
+
+        // --- Prepare the page ---
+        userNameEl.textContent = capitalizedName;
+        const pathLength = checkmarkPathEl.getTotalLength();
+        checkmarkPathEl.style.strokeDasharray = pathLength;
+        checkmarkPathEl.style.strokeDashoffset = pathLength;
+
+        // --- The "Instant Approval" Animation Sequence ---
+
+        // 1. Show "VALIDATING..."
+        setTimeout(() => {
+            statusTextEl.textContent = 'VALIDATING...';
+        }, 500);
+
+        // 2. Change to "APPROVED..."
+        setTimeout(() => {
+            statusTextEl.textContent = 'APPROVED...';
+        }, 2000);
+
+        // 3. Final "ACCESS GRANTED" confirmation
+        setTimeout(() => {
+            statusTextEl.classList.remove('text-gray-400');
+            statusTextEl.classList.add('text-green-400', 'font-bold');
+            statusTextEl.textContent = 'ACCESS GRANTED';
+            backgroundEl.style.opacity = '1';
+            document.title = `Access Granted for ${capitalizedName}!`;
+            if (faviconEl) faviconEl.href = checkmarkFaviconPath;
+        }, 2800);
+
+        // 4. Automatically redirect
+        setTimeout(() => {
+            let finalURL = affiliateURL;
+            const params = [];
+            if (email) params.push(`email=${encodeURIComponent(email)}`);
+            if (name && name !== 'Guest') params.push(`name=${encodeURIComponent(name)}`);
+
+            if (params.length > 0) {
+                finalURL += (affiliateURL.includes('?') ? '&' : '?') + params.join('&');
+            }
+            window.location.href = finalURL;
+        }, 4500);
+    });
+</script>
+</body>
+</html>

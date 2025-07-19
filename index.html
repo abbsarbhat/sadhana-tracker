@@ -1,0 +1,897 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quit The Apps - The Honest Alternative</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap" rel="stylesheet">
+    <style>
+        /* CSS Variables */
+        :root {
+            --accent-yellow: #FBBF24;
+            --accent-yellow-dark: #F59E0B;
+            --accent-red: #EF4444;
+            --bg-dark: #111827;
+            --bg-black: #000000;
+            --text-light: #E5E7EB;
+            --text-gray: #9CA3AF;
+            --border-gray: #4B5563;
+        }
+
+        /* Base & Animation Styles */
+        body {
+            font-family: 'Inter', sans-serif;
+            background: radial-gradient(ellipse at center, #111827 0%, #000000 100%);
+            color: var(--text-light);
+            overflow-x: hidden;
+        }
+
+        .main-content { position: relative; z-index: 2; }
+        .fade-in { animation: fadeIn 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) forwards; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* Responsive Scrolling Image Background */
+        #scrolling-background {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            background-image: url('img.jpg'); /* * IMPORTANT: REPLACE THIS URL */
+            background-position: center center;
+        }
+
+        /* Desktop: Side-to-side scroll */
+        @media (min-width: 768px) {
+            #scrolling-background {
+                background-size: 3000px auto;
+                animation: scroll-left 60s linear infinite;
+            }
+            @keyframes scroll-left {
+                0% { background-position: 0% 50%; }
+                100% { background-position: -3000px 50%; }
+            }
+        }
+
+        /* Mobile: Ken Burns effect */
+        @media (max-width: 767px) {
+            #scrolling-background {
+                background-size: cover;
+                animation: kenBurnsMobile 40s infinite alternate ease-in-out;
+            }
+            @keyframes kenBurnsMobile {
+                0% { transform: scale(1) translate(0, 0); }
+                100% { transform: scale(1.1) translate(2%, -1%); }
+            }
+        }
+
+        /* Opt-in Page Background */
+        #optin-background {
+            background-image: url('optinbg.png'); /* * IMPORTANT: REPLACE THIS URL */
+            background-position: center center;
+            background-repeat: repeat-x;
+            opacity: 0;
+            transition: opacity 0.8s ease-in-out;
+        }
+
+        @media (min-width: 768px) {
+            #optin-background {
+                background-size: 2500px auto;
+                animation: scroll-right-to-left 90s linear infinite;
+            }
+            @keyframes scroll-right-to-left {
+                from { background-position-x: 0px; }
+                to { background-position-x: -2500px; }
+            }
+        }
+
+        @media (max-width: 767px) {
+            #optin-background {
+                background-size: cover;
+                background-repeat: no-repeat;
+                animation: kenBurnsMobileOptin 45s infinite alternate ease-in-out;
+            }
+            @keyframes kenBurnsMobileOptin {
+                from { transform: scale(1.1) translate(0, 0); }
+                to { transform: scale(1.2) translate(-3%, 2%); }
+            }
+        }
+
+        .background-overlay {
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: radial-gradient(ellipse at center, rgba(17,24,39,0.75) 0%, rgba(17,24,39,0.98) 70%, #000 100%);
+            z-index: 1;
+        }
+
+        /* Quiz Styles */
+        .headline-font { font-weight: 900; }
+        .accent-yellow { color: var(--accent-yellow); }
+        .accent-yellow-bg { background-color: var(--accent-yellow); }
+        .accent-yellow-bg-hover:hover { background-color: var(--accent-yellow-dark); }
+        .quiz-content-wrapper { position: relative; min-height: 350px; }
+        .quiz-question-container { position: absolute; width: 100%; opacity: 0; transform: translateX(50px); transition: transform 0.4s ease-out, opacity 0.4s ease-out; pointer-events: none; }
+        .quiz-question-container.active { opacity: 1; transform: translateX(0); pointer-events: auto; }
+        .quiz-question-container.slide-out { opacity: 0; transform: translateX(-50px); }
+        .quiz-option { transition: all 0.2s ease-in-out; }
+        .quiz-option:hover { border-color: var(--accent-yellow); transform: translateY(-2px); }
+        .quiz-option.selected { background-color: var(--accent-yellow); border-color: var(--accent-yellow); color: var(--bg-dark); transform: scale(1.02); }
+        .options-container.selection-made .quiz-option:not(.selected) { opacity: 0.4; pointer-events: none; }
+        .typewriter-text::after { content: '_'; animation: blink 0.7s step-end infinite; color: var(--accent-yellow); }
+        @keyframes blink { 50% { opacity: 0; } }
+
+        /* Exit Intent Modal */
+        #exit-intent-modal { display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.8); backdrop-filter: blur(5px); }
+        .cta-glow { box-shadow: 0 0 25px rgba(251, 191, 36, 0.6); animation: pulse-glow 2.5s infinite ease-in-out; }
+        @keyframes pulse-glow { 0%, 100% { box-shadow: 0 0 25px rgba(251, 191, 36, 0.6); } 50% { box-shadow: 0 0 40px rgba(251, 191, 36, 0.8); } }
+
+        /* Urgency & Form Styles */
+        .timer-gauge-bg { stroke: var(--border-gray); }
+        .timer-gauge-fg { stroke: var(--accent-yellow); transition: stroke 1s linear, stroke-dashoffset 1s linear; transform: rotate(-90deg); transform-origin: 50% 50%; }
+        .timer-gauge-fg.urgent { stroke: var(--accent-red); }
+        .timer-text.urgent, .timer-text { animation: heartbeat 1.2s infinite ease-in-out; }
+        @keyframes heartbeat { 50% { transform: scale(1.05); } }
+        .optin-container-urgent { animation: border-pulse-red 1.5s infinite; }
+        @keyframes border-pulse-red { 50% { border-color: var(--accent-red); box-shadow: 0 0 25px rgba(239, 68, 68, 0.5); } }
+        .interactive-input:focus { outline: none; box-shadow: 0 0 0 2px var(--bg-dark), 0 0 0 4px var(--accent-yellow-dark); }
+        .form-error-shake { animation: form-error-shake 0.5s ease; }
+        @keyframes form-error-shake { 0%,100%{transform:translateX(0)} 10%,30%,50%,70%,90%{transform:translateX(-5px)} 20%,40%,60%,80%{transform:translateX(5px)} }
+
+        /* Effects */
+        .vignette-effect { box-shadow: inset 0 0 120px 20px rgba(0,0,0,0.7) !important; }
+        #quiz-content-container.glitch-active::after { content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 3px; background: rgba(255, 255, 255, 0.05); animation: scanline 1.5s linear infinite; }
+        @keyframes scanline { 0% { transform: translateY(-20px); } 100% { transform: translateY(120%); } }
+
+        /* Commitment Slider */
+        .commitment-slider-container { user-select: none; -webkit-user-select: none; }
+        .commitment-slider-thumb { position: absolute; top: 4px; left: 4px; z-index: 10; }
+        .commitment-slider-thumb.unlocked { background-color: var(--accent-yellow) !important; }
+        #main-cta-btn:disabled { background-color: var(--border-gray); color: var(--text-gray); cursor: not-allowed; opacity: 0.7; box-shadow: none; }
+        #main-cta-btn:disabled:hover { background-color: var(--border-gray); }
+        #main-cta-btn.activating::after { content: ''; position: absolute; top: 0; left: 0; width: 10px; height: 100%; background: white; box-shadow: 0 0 20px 5px white; filter: blur(5px); animation: btn-scan 0.3s ease-out; }
+        @keyframes btn-scan { from { transform: translateX(-20px); } to { transform: translateX(500px); } }
+        .cta-unlocked-thump { animation: cta-thump 0.3s ease-in-out; }
+        @keyframes cta-thump { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.05); } }
+
+        /* Curiosity Button (Magnetic/Shimmer) */
+        @keyframes breathing-shadow { 0%, 100% { box-shadow: 0 0 20px rgba(251, 191, 36, 0.25); } 50% { box-shadow: 0 0 35px rgba(251, 191, 36, 0.4); } }
+        @keyframes shimmer-effect { 0% { transform: translateX(-150%) skewX(-30deg); } 20% { transform: translateX(150%) skewX(-30deg); } 100% { transform: translateX(150%) skewX(-30deg); } }
+        .cta-curiosity-button { border: 1px solid var(--accent-yellow-dark); border-radius: 0.5rem; padding: 1rem 3rem; font-size: 1.25rem; font-weight: bold; color: var(--text-light); background-color: var(--bg-dark); cursor: pointer; position: relative; overflow: hidden; transition: transform 0.2s ease; animation: breathing-shadow 4s ease-in-out infinite; }
+        .cta-curiosity-button>span { position: relative; z-index: 2; transition: opacity 0.3s ease-in-out; }
+        .cta-curiosity-button::before { content: ''; position: absolute; z-index: 1; }
+        @media (hover: hover) and (pointer: fine) { /* Desktop Hover */
+            .cta-curiosity-button::before { left: var(--mouse-x, 50%); top: var(--mouse-y, 50%); width: 0; height: 0; transform: translate(-50%, -50%); background: radial-gradient(circle, var(--accent-yellow) 0%, rgba(245, 158, 11, 0.3) 50%, transparent 70%); border-radius: 50%; opacity: 0; transition: width 0.4s ease, height 0.4s ease, opacity 0.4s ease; }
+            .cta-curiosity-button:hover { border-color: var(--accent-yellow); transform: scale(1.05); }
+            .cta-curiosity-button:hover::before { width: 250px; height: 250px; opacity: 1; }
+            .cta-curiosity-button:active { transform: scale(1.02); }
+        }
+        @media (hover: none) and (pointer: coarse) { /* Mobile Touch */
+            .cta-curiosity-button::before { top: 0; left: 0; width: 75%; height: 100%; background: linear-gradient(to right, transparent 0%, rgba(255, 255, 255, 0.2) 50%, transparent 100%); animation: shimmer-effect 5s ease-in-out infinite; animation-delay: 1s; }
+            .cta-curiosity-button:active { transform: scale(0.98); background-color: var(--accent-yellow-dark); }
+        }
+
+        /* Premium Benefit Badges */
+        .benefit-badges-container { display: flex; flex-wrap: wrap; justify-content: center; gap: 0.75rem; padding: 0.25rem; }
+        .benefit-badge { display: flex; align-items: center; background-color: var(--bg-dark); border: 1px solid var(--border-gray); border-radius: 9999px; padding: 0.5rem 1rem; color: var(--text-gray); font-size: 0.875rem; font-weight: 500; opacity: 0; transform: scale(0.95) translateY(10px); transition: all 0.5s cubic-bezier(0.25, 1, 0.5, 1); }
+        .benefit-badge.visible { opacity: 1; transform: scale(1) translateY(0); }
+        .benefit-badge.checked { color: #E5E7EB; background-color: #1a3a2f; border-color: #22C55E; box-shadow: 0 0 15px rgba(34, 197, 94, 0.2); }
+        .benefit-badge .icon { width: 18px; height: 18px; border-radius: 50%; margin-right: 8px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; transition: all 0.4s ease-in-out; border: 2px solid var(--border-gray); }
+        .benefit-badge.checked .icon { background-color: #22C55E; border-color: #16a34a; transform: rotate(360deg) scale(1.1); }
+        @keyframes draw-checkmark { 0% { stroke-dashoffset: 24; } 100% { stroke-dashoffset: 0; } }
+        .benefit-badge.checked .checkmark-path { stroke-dasharray: 24; stroke-dashoffset: 24; animation: draw-checkmark 0.4s ease-out forwards; }
+    
+    @keyframes slide-and-fade-in {
+    from {
+        opacity: 0;
+        transform: translateX(-15px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+        
+        
+        /* --- NEW CURIOSITY ANIMATIONS --- */
+.blinking-cursor::after {
+    content: '▋';
+    animation: blink 1s step-end infinite;
+    color: var(--accent-yellow);
+    margin-left: 0.25rem;
+}
+.terminal-line {
+    opacity: 0;
+    transform: translateY(15px);
+    animation: fadeIn 0.5s ease 1 forwards;
+    
+    
+}
+        
+        /* --- NEW QUIZ VISUAL PLACEHOLDER V2 ("Shrouded Reveal") --- */
+.visual-placeholder {
+    width: 100%;
+    max-width: 250px;
+    flex-shrink: 0;
+    aspect-ratio: 4 / 3;
+    border-radius: 0.75rem; /* Slightly more rounded */
+    background-color: rgba(10, 15, 25, 0.5); /* A deep, dark blue-ish color */
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    /* Soft, glowing inner border */
+    box-shadow: inset 0 0 15px rgba(50, 50, 80, 0.6);
+}
+
+/* The animated "light sweep" or shimmer effect */
+.visual-placeholder::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    width: 100px; /* Width of the shimmer */
+    height: 150%; /* Taller to create a diagonal effect */
+    background: linear-gradient(
+        to right,
+        transparent 0%,
+        rgba(251, 191, 36, 0.1) 50%, /* Use accent color for the shimmer */
+        transparent 100%
+    );
+    animation: light-sweep 5s ease-in-out infinite;
+}
+
+/* The pulsating icon in the middle */
+.visual-placeholder .icon {
+    font-family: serif; /* A serif font for an elegant question mark */
+    font-size: 4rem; /* Big and bold */
+    color: rgba(251, 191, 36, 0.5);
+    animation: subtle-pulse 3s ease-in-out infinite;
+    text-shadow: 0 0 15px rgba(251, 191, 36, 0.3);
+}
+
+@keyframes light-sweep {
+    0% { transform: translateX(-200px) rotate(-45deg); }
+    100% { transform: translateX(500px) rotate(-45deg); }
+}
+
+@keyframes subtle-pulse {
+    0%, 100% { opacity: 0.7; transform: scale(1); }
+    50% { opacity: 1; transform: scale(1.05); }
+}
+
+/* Responsive layout wrapper for the quiz question */
+.quiz-layout {
+    display: flex;
+    flex-direction: column; /* Mobile-first: stacked */
+    align-items: center;
+    gap: 1.5rem;
+}
+
+@media (min-width: 768px) {
+    .quiz-layout {
+        flex-direction: row; /* Desktop: side-by-side */
+        gap: 2rem;
+    }
+    .quiz-content {
+        text-align: left; /* Align text left on desktop */
+    }
+}
+        
+        
+        /* --- NEW "SPOTLIGHT REVEAL" ANIMATION --- */
+.reveal {
+  opacity: 0; /* Start invisible */
+  animation: reveal-animation 0.8s cubic-bezier(0.25, 1, 0.5, 1) forwards;
+}
+
+@keyframes reveal-animation {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+    </style>
+    
+</head>
+
+<body class="w-full flex items-center justify-center min-h-screen p-4 sm:p-6 md:p-8">
+     <audio id="clickSound" src="click-sound.mp3" preload="auto"></audio>
+      <audio id="swipeSound" src="swipe-complete.mp3" preload="auto"></audio>
+
+    <div id="optin-background" class="fixed top-0 left-0 w-full h-full z-0 hidden">
+        <div class="background-overlay"></div>
+    </div>
+    <div id="scrolling-background">
+        <div class="background-overlay"></div>
+    </div>
+
+    <div id="exit-intent-modal" class="items-center justify-center">
+        <div class="bg-gray-900 border-4 border-amber-400 rounded-xl shadow-2xl w-full max-w-lg mx-4 p-6 sm:p-8 text-center relative fade-in" style="animation-duration: 0.3s;">
+            <button id="close-modal-btn" class="absolute top-2 right-3 text-gray-500 hover:text-white transition-colors" style="font-size: 2.5rem; line-height: 1;">&times;</button>
+            <h2 class="text-3xl sm:text-4xl font-black text-white headline-font">WAIT!</h2>
+            <p class="text-xl sm:text-2xl accent-yellow mt-1 mb-4">You're One Click From The Answer</p>
+            
+        
+        <img id="popup-image" src="bg-kinky.png" alt="Exclusive content preview" class="rounded-lg mx-auto mb-4 border-2 border-gray-700">
+            <p class="text-gray-300 mb-2">Your private access link is being generated. Don't lose it forever.</p>
+            <p class="text-gray-400 text-sm mb-5">This spot is reserved for you for... <span id="modal-countdown" class="font-bold text-white">05:00</span></p>
+            <button id="resume-button" class="w-full accent-yellow-bg accent-yellow-bg-hover text-gray-900 font-bold text-lg py-4 px-12 rounded-lg shadow-lg transition duration-300 transform hover:scale-105 cta-glow">
+                CONTINUE - Don't Lose My Spot
+            </button>
+        </div>
+    </div>
+
+    <div class="w-full max-w-3xl mx-auto main-content">
+        <div id="landing-page" class="text-center"> <h1 class="reveal text-3xl sm:text-4xl md:text-5xl headline-font text-white leading-tight mb-4" style="animation-delay: 0.2s;">
+        The Dating App Industry is a <span class="accent-yellow">Rigged Game.</span>
+    </h1>
+
+    <p class="reveal text-lg sm:text-xl text-gray-300 max-w-2xl mx-auto mb-8" style="animation-delay: 1s;">
+        This quiz exposes how they're designed to fail you... and reveals the one honest alternative they hope you never find.
+    </p>
+
+    <div class="grid grid-cols-1 sm:grid-cols-3 gap-6 max-w-3xl mx-auto mb-10 text-left">
+        <div class="reveal bg-gray-800/50 p-4 rounded-lg border border-gray-700" style="animation-delay: 1.8s;">
+            <h3 class="font-bold text-white">End Ghosting</h3>
+            <p class="text-gray-400 text-sm mt-1">Stop wasting time on conversations that go nowhere.</p>
+        </div>
+        <div class="reveal bg-gray-800/50 p-4 rounded-lg border border-gray-700" style="animation-delay: 2s;">
+            <h3 class="font-bold text-white">Escape Invisibility</h3>
+            <p class="text-gray-400 text-sm mt-1">Get seen by high-quality matches instead of being buried.</p>
+        </div>
+        <div class="reveal bg-gray-800/50 p-4 rounded-lg border border-gray-700" style="animation-delay: 2.2s;">
+            <h3 class="font-bold text-white">Reclaim Your Time</h3>
+            <p class="text-gray-400 text-sm mt-1">No more endless swiping. Get real results, efficiently.</p>
+        </div>
+    </div>
+
+    <div class="reveal" style="animation-delay: 3s;">
+         <button id="start-quiz-btn" class="cta-curiosity-button">
+            <span>TAKE THE QUIZ</span>
+        </button>
+    </div>
+
+</div>
+
+        <div id="quiz-container" class="hidden max-w-2xl mx-auto">
+            <div class="flex justify-between text-xs sm:text-sm text-gray-400 mb-2 px-1">
+                <span class="progress-step active">The Problem</span>
+                <span class="progress-step">Your Experience</span>
+                <span class="progress-step">The Verdict</span>
+            </div>
+            <div class="w-full bg-gray-700 rounded-full h-2.5 mb-6">
+                <div id="progress-bar" class="accent-yellow-bg h-2.5 rounded-full" style="width: 10%; transition: width 0.5s ease-out;"></div>
+            </div>
+            <div id="quiz-content-container" class="quiz-container-glass p-6 md:p-8 rounded-lg shadow-2xl transition-all duration-1000">
+                <div class="quiz-content-wrapper">
+                    </div>
+            </div>
+        </div>
+    </div>
+
+    <script> document.addEventListener('DOMContentLoaded', function() {
+    // --- DOM Element Cache ---
+    
+    const page = {
+    
+        landing: document.getElementById('landing-page'),
+        quiz: document.getElementById('quiz-container'),
+        startBtn: document.getElementById('start-quiz-btn'),
+        quizContentWrapper: document.querySelector('.quiz-content-wrapper'),
+        quizContentContainer: document.getElementById('quiz-content-container'),
+        progressBar: document.getElementById('progress-bar'),
+        exitModal: document.getElementById('exit-intent-modal'),
+        modalCountdown: document.getElementById('modal-countdown'),
+        resumeBtn: document.getElementById('resume-button'),
+        closeModalBtn: document.getElementById('close-modal-btn'),
+        optinBackground: document.getElementById('optin-background')
+    };
+
+ const quizData = [
+    { 
+        question: "When you use dating apps, what's the one feeling that hits you the hardest?", 
+        options: ["Invisible - like I don't even exist.", "Frustrated - by the endless, pointless swiping.", "Hopeless - that I'll ever meet someone real."],
+        visual: 'visual_q1.gif' // <-- ADD THIS LINE for question 1
+    },
+    { 
+        question: "And what's the single biggest result of that feeling for you?", 
+        options: ["Getting zero matches for weeks.", "Conversations that are ghosted instantly.", "Realizing I've wasted hours of my life."], 
+        key: 'frustration',
+        visual: 'visual_q2.gif' // <-- ADD THIS LINE for question 2
+    },
+    { 
+        question: "Finally, do you believe these apps are designed for your success, or for their profit?", 
+        options: ["They are designed for my success.", "They are designed for their profit."],
+        visual: 'visual_q3.gif' // <-- ADD THIS LINE for question 3
+    }
+];
+
+    // --- State Variables ---
+    let currentQuestionIndex = 0;
+    let userAnswers = {};
+    let timerInterval;
+    let modalTimerInterval;
+
+    // --- NEW DYNAMIC IMAGE CODE ---
+    const popupImages = [
+        'exit1.png', // Image for 1st exit attempt
+        'exit2.png', // Image for 2nd exit attempt
+        'exit3.png', // Image for 3rd exit attempt
+        'exit4.png'  // Image for 4th exit attempt
+    ];
+    let exitAttemptCounter = 0;
+    // --- END NEW DYNAMIC IMAGE CODE ---
+
+    const originalTitle = document.title;
+    let tabFlashInterval;
+
+    // --- Functions ---
+
+    function playClickSound() {
+    const sound = document.getElementById('clickSound');
+    if (sound) {
+        sound.currentTime = 0; // Rewind to the start in case of rapid clicks
+        sound.play();
+    }
+}
+function playClickSound() {
+    const sound = document.getElementById('clickSound');
+    if (sound) {
+        sound.currentTime = 0; // Rewind to the start in case of rapid clicks
+        sound.play();
+    }
+}
+
+function playSwipeSound() {
+    const sound = document.getElementById('swipeSound');
+    if (sound) {
+        sound.currentTime = 0;
+        sound.play();
+    }
+}
+    function activateDynamicButtonText() {
+        const btnSpan = document.querySelector('#start-quiz-btn span');
+        if (!btnSpan) return;
+        const messages = ["TAKE THE QUIZ", "Reveal The Secret...", "Are You Ready?", "Start Your Analysis", "Join The Others"];
+        let messageIndex = 0;
+        const updateText = () => {
+            btnSpan.style.opacity = '0';
+            setTimeout(() => {
+                messageIndex = (messageIndex + 1) % messages.length;
+                let currentMessage = messages[messageIndex];
+                if (currentMessage === "Join The Others") {
+                    const now = new Date();
+                    const peopleCount = 12 + Math.floor(now.getMinutes() / 2) + Math.floor(Math.random() * 5);
+                    currentMessage = `${peopleCount} Took The Quiz This Hour`;
+                }
+                btnSpan.textContent = currentMessage;
+                btnSpan.style.opacity = '1';
+            }, 300);
+        };
+        setInterval(updateText, 4000);
+    }
+
+    function typewriter(element, text, speed = 30) {
+        let i = 0;
+        element.innerHTML = "";
+        const typing = setInterval(() => {
+            if (i < text.length) {
+                element.innerHTML += text.charAt(i);
+                i++;
+            } else {
+                clearInterval(typing);
+                element.classList.remove('typewriter-text');
+            }
+        }, speed);
+    }
+
+    function startModalCountdown() {
+        clearInterval(modalTimerInterval);
+        const modalCountdownEl = document.getElementById('modal-countdown');
+        if (!modalCountdownEl) return;
+        let duration = 5 * 60;
+        modalCountdownEl.textContent = "05:00";
+        modalTimerInterval = setInterval(() => {
+            duration--;
+            if (duration < 0) {
+                clearInterval(modalTimerInterval);
+                modalCountdownEl.textContent = "EXPIRED";
+                return;
+            }
+            const minutes = String(Math.floor(duration / 60)).padStart(2, '0');
+            const seconds = String(duration % 60).padStart(2, '0');
+            modalCountdownEl.textContent = `${minutes}:${seconds}`;
+        }, 1000);
+    }
+
+    function setupBackButtonTrigger() {
+        history.pushState({ modal: true }, null);
+        window.addEventListener('popstate', function(event) {
+            handleExitIntent();
+            history.pushState({ modal: true }, null);
+        });
+    }
+    
+/**
+ * Initializes and starts the quiz.
+ */
+/**
+ * Initializes and starts the quiz.
+ */
+function startQuiz() {
+     playClickSound(); // <-- ADD THIS LINE
+    setupBackButtonTrigger();
+    page.landing.style.display = 'none';
+    page.quiz.style.display = 'block';
+
+    const backgroundEl = document.getElementById('scrolling-background');
+    if (backgroundEl) backgroundEl.style.display = 'none';
+
+    let questionHTML = '';
+    quizData.forEach((q, index) => {
+        const options = q.options.map((opt, optIndex) =>
+            `<div class="quiz-option border-2 border-gray-600 rounded-lg p-4 mb-4 cursor-pointer text-base sm:text-lg" data-q-index="${index}" data-o-index="${optIndex}">${opt}</div>`
+        ).join('');
+
+        questionHTML += `
+            <div class="quiz-question-container" data-question="${index}">
+                <div class="quiz-layout">
+                    <div class="visual-placeholder">
+                        <img src="${q.visual}" class="w-full h-full object-cover opacity-0" style="animation: fadeIn 0.5s 0.2s forwards;">
+                    </div>
+
+                    <div class="quiz-content w-full">
+                        <h2 class="text-xl sm:text-2xl md:text-3xl font-bold mb-6 typewriter-text"></h2>
+                        <div class="options-container fade-in" style="animation-delay: 0.5s;">
+                            ${options}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        `;
+    });
+    page.quizContentWrapper.innerHTML = questionHTML;
+    showQuestion(0);
+}
+
+    function selectAnswer(qIndex, oIndex) {
+        const questionContainer = page.quizContentWrapper.querySelector(`[data-question="${qIndex}"]`);
+        const optionsContainer = questionContainer.querySelector('.options-container');
+        optionsContainer.querySelectorAll('.quiz-option')[oIndex].classList.add('selected');
+        optionsContainer.classList.add('selection-made');
+        const question = quizData[qIndex];
+        const answer = question.options[oIndex];
+        userAnswers[question.key || qIndex] = answer;
+        currentQuestionIndex++;
+        updateProgressBar();
+        setTimeout(() => {
+            questionContainer.classList.add('slide-out');
+            questionContainer.classList.remove('active');
+            if (currentQuestionIndex < quizData.length) {
+                showQuestion(currentQuestionIndex);
+            } else {
+                setTimeout(renderOptInForm, 400);
+            }
+        }, 300);
+    }
+
+    function showQuestion(index) {
+        const questionToShow = page.quizContentWrapper.querySelector(`[data-question="${index}"]`);
+        if (questionToShow) {
+            questionToShow.classList.add('active');
+            const questionText = quizData[index].question;
+            const h2 = questionToShow.querySelector('h2');
+            typewriter(h2, questionText);
+        }
+    }
+
+    function updateProgressBar() {
+        const progressPercentage = (currentQuestionIndex / quizData.length) * 100;
+        page.progressBar.style.width = `${progressPercentage}%`;
+        page.quiz.querySelectorAll('.progress-step').forEach((step, index) => {
+            step.classList.toggle('active', currentQuestionIndex > index);
+        });
+    }
+
+    function renderOptInForm() {
+        if (page.optinBackground) {
+            page.optinBackground.classList.remove('hidden');
+            setTimeout(() => { page.optinBackground.style.opacity = '1'; }, 100);
+        }
+        document.documentElement.style.height = '100%';
+        document.documentElement.style.overflow = 'hidden';
+        document.body.style.height = '100%';
+        document.body.style.overflowY = 'auto';
+        page.progressBar.style.width = `100%`;
+        page.quiz.querySelector('.progress-step:last-child').classList.add('active');
+        page.quizContentWrapper.innerHTML = '';
+        let personalizedHeadline = "Your Results Are Ready.";
+        if (userAnswers.frustration) {
+            if (userAnswers.frustration.includes("zero matches")) personalizedHeadline = "We Found the Solution to Getting More Matches.";
+            else if (userAnswers.frustration.includes("ghosted")) personalizedHeadline = "We Found the Fix for Ghosting.";
+            else if (userAnswers.frustration.includes("wasted hours")) personalizedHeadline = "We Found a Way to Stop Wasting Your Time.";
+        }
+        const optInHTML = `
+            <div class="text-center fade-in">
+                <h2 class="text-3xl sm:text-4xl font-black mb-4 mt-4 bg-gradient-to-r from-amber-300 to-amber-500 text-transparent bg-clip-text [text-shadow:0_2px_10px_rgba(251,191,36,0.3)]">
+                    ${personalizedHeadline}
+                </h2>
+                <div class="max-w-md mx-auto my-6 benefit-badges-container">
+                    <div class="benefit-badge"> <span class="icon"></span><span>Pattern Analyzed</span> </div>
+                    <div class="benefit-badge"> <span class="icon"></span><span>1500+ Matchs Found</span> </div>
+                    <div class="benefit-badge"> <span class="icon"></span><span>'Man in Demand' Access: GRANTED</span> </div>
+                </div>
+                <div class="max-w-md mx-auto space-y-4">
+                    <form id="optin-form" class="w-full" novalidate>
+                        <div class="space-y-4">
+                            <div class="relative">
+                                <input type="text" id="first-name" placeholder="Enter your first name" class="w-full p-3 sm:p-4 bg-gray-800 border-2 border-gray-700 rounded-lg text-white text-base sm:text-lg transition-all duration-300 interactive-input" required>
+                                <small class="text-red-500 text-xs mt-1 absolute opacity-0 transition-opacity left-2 -bottom-5"></small>
+                            </div>
+                            <div class="relative">
+                                <div class="flex items-center">
+                                    <input type="email" id="email" placeholder="Enter your best email address" class="w-full p-3 sm:p-4 bg-gray-800 border-2 border-gray-700 rounded-lg text-white text-base sm:text-lg transition-all duration-300 interactive-input" required>
+                                    <div class="group relative ml-2">
+                                        <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path></svg>
+                                        <div class="absolute bottom-full mb-2 -left-1/2 -translate-x-1/4 w-48 bg-black text-white text-xs rounded py-1 px-2 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none">100% secure. We will never share your email.</div>
+                                    </div>
+                                </div>
+                                 <small class="text-red-500 text-xs mt-1 absolute opacity-0 transition-opacity left-2 -bottom-5"></small>
+                            </div>
+                        </div>
+                        <div id="commitment-slider-container" class="w-full bg-gray-700 rounded-full p-1 my-5 sm:my-6 relative h-11 sm:h-12 flex items-center commitment-slider-container">
+                            <div id="commitment-slider-thumb" class="w-20 h-9 sm:w-24 sm:h-10 bg-gray-500 rounded-full flex items-center justify-center cursor-pointer transition-all duration-300 commitment-slider-thumb"><svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg></div>
+                            <span id="commitment-slider-text" class="absolute left-1/2 -translate-x-1/2 text-gray-400 text-xs sm:text-sm pointer-events-none">Slide to Commit</span>
+                        </div>
+                        <button type="submit" id="main-cta-btn" class="w-full accent-yellow-bg accent-yellow-bg-hover text-gray-900 py-3 sm:py-4 px-10 rounded-lg transition-colors cta-glow relative overflow-hidden" disabled><span class="text-lg sm:text-xl font-bold">UNLOCK INSTANT ACCESS</span></button>
+                        <div class="mt-5 bg-gray-900/50 border border-gray-700 rounded-lg p-3">
+                            <div id="dynamic-social-proof" class="text-base text-amber-400 transition-opacity duration-500 opacity-0 min-h-[1.5rem] flex items-center justify-center"></div>
+                            <div class="mt-2 text-center">
+                                <p class="text-xs text-gray-500 mb-1"> Your access is reserved for: <span id="countdown-timer" class="font-bold text-gray-200 transition-colors duration-500 timer-text">05:00</span> </p>
+                                <div class="w-full bg-gray-600 rounded-full h-2"> <div id="timer-bar-fg" class="bg-amber-400 h-2 rounded-full transition-all duration-500" style="width: 100%;"></div> </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>`;
+        page.quizContentWrapper.innerHTML = optInHTML;
+        animateChecklist();
+        activateCommitmentSlider();
+        startUrgencySequence(5 * 60);
+        document.getElementById('optin-form').addEventListener('submit', handleFormSubmit);
+        const nameInput = document.getElementById('first-name');
+        const socialProofEl = document.getElementById('dynamic-social-proof');
+        if (nameInput && socialProofEl) {
+            nameInput.addEventListener('input', () => {
+                const name = nameInput.value.trim();
+                if (name.length > 0) {
+                    const displayName = name.charAt(0).toUpperCase() + name.slice(1);
+                    const peopleCount = 12 + Math.floor(new Date().getMinutes() / 2) + Math.floor(Math.random() * 5);
+                    socialProofEl.innerHTML = `<span><strong class="text-amber-300">${displayName}</strong>, you're joining ${peopleCount} others this hour!</span>`;
+                    socialProofEl.style.opacity = '1';
+                } else {
+                    socialProofEl.style.opacity = '0';
+                }
+            });
+        }
+    }
+    
+    function animateChecklist() {
+        const items = document.querySelectorAll('.benefit-badge');
+        items.forEach((item, index) => {
+            setTimeout(() => {
+                item.classList.add('visible');
+                setTimeout(() => {
+                    item.classList.add('checked');
+                    const icon = item.querySelector('.icon');
+                    icon.innerHTML = `<svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="3"><path class="checkmark-path" stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"></path></svg>`;
+                }, 400);
+            }, 500 + (index * 300));
+        });
+    }
+
+    function activateCommitmentSlider() {
+        const sliderContainer = document.getElementById('commitment-slider-container');
+        const sliderThumb = document.getElementById('commitment-slider-thumb');
+        const ctaBtn = document.getElementById('main-cta-btn');
+        const sliderText = document.getElementById('commitment-slider-text');
+        if (!sliderContainer || !sliderThumb || !ctaBtn || !sliderText) return;
+        let isDragging = false, startX = 0, offsetX = 0;
+        const startSlide = (e) => {
+            if (ctaBtn.disabled === false) return;
+            isDragging = true;
+            startX = e.pageX || e.touches[0].pageX;
+            offsetX = sliderThumb.offsetLeft;
+            e.preventDefault();
+        };
+        const onSlide = (e) => {
+            if (!isDragging) return;
+            const currentX = e.pageX || e.touches[0].pageX;
+            let moveX = currentX - startX + offsetX;
+            const minX = 4;
+            const maxX = sliderContainer.offsetWidth - sliderThumb.offsetWidth - 4;
+            moveX = Math.max(minX, Math.min(moveX, maxX));
+            sliderThumb.style.left = `${moveX}px`;
+            if (moveX >= maxX) {
+                 playSwipeSound();  
+                isDragging = false;
+                ctaBtn.disabled = false;
+                sliderThumb.classList.add('unlocked');
+                sliderText.textContent = 'Committed!';
+                sliderThumb.style.left = `${maxX}px`;
+                ctaBtn.classList.add('cta-unlocked-thump');
+                setTimeout(() => ctaBtn.classList.remove('cta-unlocked-thump'), 300);
+            }
+        };
+        const endSlide = () => {
+            if (!isDragging) return;
+            isDragging = false;
+            const maxX = sliderContainer.offsetWidth - sliderThumb.offsetWidth - 4;
+            if (sliderThumb.offsetLeft < maxX) {
+                sliderThumb.style.left = '4px';
+            }
+        };
+        sliderThumb.addEventListener('mousedown', startSlide);
+        sliderThumb.addEventListener('touchstart', startSlide, { passive: false });
+        document.addEventListener('mousemove', onSlide);
+        document.addEventListener('touchmove', onSlide, { passive: false });
+        document.addEventListener('mouseup', endSlide);
+        document.addEventListener('touchend', endSlide);
+    }
+    
+    function startUrgencySequence(totalDuration) {
+        const timerEl = document.getElementById('countdown-timer');
+        const timerBarFgEl = document.getElementById('timer-bar-fg');
+        const ctaBtn = document.getElementById('main-cta-btn');
+        let duration = totalDuration;
+        timerInterval = setInterval(() => {
+            duration--;
+            const minutes = String(Math.floor(duration / 60)).padStart(2, '0');
+            const seconds = String(duration % 60).padStart(2, '0');
+            const timeString = `${minutes}:${seconds}`;
+            if (timerEl) timerEl.textContent = timeString;
+            if (page.modalCountdown) page.modalCountdown.textContent = timeString;
+            const progress = duration / totalDuration;
+            if (timerBarFgEl) timerBarFgEl.style.width = `${progress * 100}%`;
+            if (duration < 60) {
+                if (timerEl) timerEl.classList.add('urgent');
+                if (timerBarFgEl) timerBarFgEl.classList.add('urgent');
+                if (page.quizContentContainer) page.quizContentContainer.classList.add('optin-container-urgent');
+            }
+            if (duration < 30) {
+                if (page.quizContentContainer) page.quizContentContainer.classList.add('vignette-effect', 'glitch-active');
+            }
+            if (ctaBtn && !ctaBtn.disabled) {
+                ctaBtn.style.animationDuration = `${Math.max(0.5, 2.5 * progress)}s`;
+            }
+            if (duration <= 0) {
+                stopAllTimers();
+                if (timerEl) timerEl.textContent = "EXPIRED";
+                if (timerBarFgEl) timerBarFgEl.style.width = '0%';
+                if (page.quizContentContainer) page.quizContentContainer.classList.add('optin-container-urgent');
+            }
+        }, 1000);
+    }
+
+    function handleFormSubmit(e) {
+        e.preventDefault();
+        const form = e.target;
+        const nameInput = form.querySelector('#first-name');
+        const emailInput = form.querySelector('#email');
+        const ctaBtn = document.querySelector('#main-cta-btn');
+        let isValid = true;
+        const validateInput = (input, message) => {
+            const errorEl = input.closest('.relative').querySelector('small');
+            if (!input.value.trim() || (input.type === 'email' && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(input.value))) {
+                input.closest('.relative').classList.add('form-error-shake');
+                if (errorEl) { errorEl.textContent = message; errorEl.style.opacity = '1'; }
+                setTimeout(() => input.closest('.relative').classList.remove('form-error-shake'), 500);
+                return false;
+            }
+            if (errorEl) errorEl.style.opacity = '0';
+            return true;
+        };
+        isValid = validateInput(nameInput, "First name is required.") && isValid;
+        isValid = validateInput(emailInput, "A valid email is required.") && isValid;
+        if (ctaBtn.disabled) {
+            const slider = document.getElementById('commitment-slider-container');
+            if (slider) { slider.classList.add('form-error-shake'); setTimeout(() => slider.classList.remove('form-error-shake'), 500); }
+            isValid = false;
+        }
+        if (!isValid) return;
+        form.dataset.submitted = 'true';
+        stopAllTimers();
+        userAnswers.firstName = nameInput.value;
+        userAnswers.email = emailInput.value;
+      console.log('High-Quality Lead Captured:', userAnswers);
+        window.location.href = `processing.html?name=${encodeURIComponent(userAnswers.firstName)}&email=${encodeURIComponent(userAnswers.email)}`;
+    }
+
+    function stopAllTimers() { clearInterval(timerInterval); stopTabFlashing(); }
+    function stopTabFlashing() { clearInterval(tabFlashInterval); document.title = originalTitle; }
+
+    // --- NEW DYNAMIC IMAGE LOGIC IS IN THIS FUNCTION ---
+    function handleExitIntent() {
+        const isModalVisible = page.exitModal.style.display === 'flex';
+        if (isModalVisible) {
+            return;
+        }
+        const form = document.getElementById('optin-form');
+        if (form && form.dataset.submitted === 'true') {
+            return;
+        }
+        const popupImage = document.getElementById('popup-image');
+        const nextImage = popupImages[exitAttemptCounter % popupImages.length];
+        if (popupImage) {
+            popupImage.src = nextImage;
+        }
+        exitAttemptCounter++;
+        page.exitModal.style.display = 'flex';
+        startModalCountdown();
+    }
+
+    function handleVisibilityChange() {
+        if (document.hidden) {
+            handleExitIntent();
+            let i = 0;
+            tabFlashInterval = setInterval(() => {
+                document.title = (i++ % 2) ? originalTitle : "🔴 YOUR SPOT IS EXPIRING!";
+            }, 1000);
+        } else {
+            stopTabFlashing();
+        }
+    }
+
+    function initializeExitIntentTriggers() {
+        document.body.addEventListener('mouseleave', handleExitIntent);
+    }
+
+    // --- Initial Event Listeners ---
+    activateDynamicButtonText();
+    initializeExitIntentTriggers();
+
+    if (page.startBtn) page.startBtn.addEventListener('click', startQuiz);
+
+    if (page.resumeBtn) {
+        page.resumeBtn.addEventListener('click', () => {
+            page.exitModal.style.display = 'none';
+            clearInterval(modalTimerInterval);
+        });
+    }
+    
+    if (page.closeModalBtn) {
+        page.closeModalBtn.addEventListener('click', () => {
+            page.exitModal.style.display = 'none';
+            clearInterval(modalTimerInterval);
+        });
+    }
+
+    if (page.quizContentWrapper) {
+        page.quizContentWrapper.addEventListener('click', function(e) {
+            const selectedOption = e.target.closest('.quiz-option');
+            if (selectedOption) {
+                 playClickSound();
+                const qIndex = parseInt(selectedOption.dataset.qIndex, 10);
+                const oIndex = parseInt(selectedOption.dataset.oIndex, 10);
+                selectAnswer(qIndex, oIndex);
+            }
+        });
+    }
+
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+});
+</script>
+
+</body>
+</html>
+
