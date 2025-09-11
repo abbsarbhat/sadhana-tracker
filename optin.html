@@ -125,6 +125,36 @@
     color: var(--primary-color);
     font-weight: 700;
 }
+
+/*
+ * A more professional and polished security note.
+ * Replace your existing .security-note CSS with this block.
+*/
+
+.security-note {
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    gap: 0.5rem;
+    margin: 1.5rem auto 0;
+    max-width: 90%;
+    font-size: 0.75rem; /* UPDATED: A smaller size (12px) for a sleek look */
+    color: #6B7280;
+    line-height: 1.5;
+    text-align: center;
+}
+/*
+ * This styles the lock icon to perfectly match the text.
+ */
+.security-note svg {
+    width: 1em; /* Sizes icon relative to the font size */
+    height: 1em; /* Sizes icon relative to the font size */
+    margin-top: 0.2em; /* Nudges icon down for better visual alignment */
+    flex-shrink: 0; /* Prevents icon from shrinking if the container is narrow */
+    stroke-width: 1.8;
+    /* This special keyword makes the icon automatically use the text color */
+    color: currentColor;
+}
     </style>
 </head>
 <body>
@@ -142,8 +172,8 @@
             </div>
             
             <div class="dynamic-headline">
-                <h1 id="dynamic-h1">Your Custom Path is Ready!</h1>
-                <p id="dynamic-p">Based on your answers, we've outlined a potential path for you. Enter your details below to see it.</p>
+                <h1 id="dynamic-h1">Stop Renting. Start Owning.!</h1>
+                <p id="dynamic-p">The frustrating search is over. Your quiz answers just gave you insider access. Unlock your private list of off-market homes..</p>
             </div>
             
             <form id="optin-form" novalidate>
@@ -190,6 +220,15 @@
                 </div>
             </form>
 
+            <div class="security-note">
+    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M16.5 10.5V6.75a4.5 4.5 0 10-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 002.25-2.25v-6.75a2.25 2.25 0 00-2.25-2.25H6.75a2.25 2.25 0 00-2.25 2.25v6.75a2.25 2.25 0 002.25 2.25z" />
+    </svg>
+    <span>
+        By submitting your information, you are agreeing to receive communications from Stop Renting. We respect your privacy and will never spam you. You can unsubscribe at any time.
+    </span>
+</div>
+
             <div class="social-proof-block">
                 <div class="testimonial-container">
                     <img src="placeholder.jpg" id="testimonial-image" loading="lazy" width="70" height="70" alt="Testimonial author photo">
@@ -233,7 +272,7 @@ setTimeout(() => {
             const fearMap = { 'losing-money': 'losing your money', 'complicated-contracts': 'complicated contracts', 'never-own': 'never owning the home' };
             const obstacleMap = { 'credit-score': 'your credit score', 'down-payment': 'a down payment', 'self-doubt': 'self-doubt' };
             if (fear && obstacle && fearMap[fear] && obstacleMap[obstacle]) {
-                dynamicP.innerHTML = `Based on your concerns about <strong>${fearMap[fear]}</strong> and overcoming <strong>${obstacleMap[obstacle]}</strong>, we've identified a potential path for you. Enter your details to see it.`;
+                dynamicP.innerHTML = `Your frustration with <strong>${obstacleMap[obstacle]}</strong> and worrying about <strong>${fearMap[fear]}</strong> is over. Your answers just gave you insider access. Unlock your private list of off-market homes.`;
             }
 
             // --- ADDED: Maps for hyper-personalized messages ---
@@ -276,24 +315,43 @@ setTimeout(() => {
                 dynamicMessage.classList.remove('visible');
                 setTimeout(() => {
                     // --- MODIFIED: Personalized message logic using URL params ---
-                    switch(stepIndex) {
-                        case 0: // First Name Step
-                            if (userFirstName) {
-                                dynamicMessage.innerHTML = `Great start, <strong>${userFirstName}</strong>! Let's get this done.`;
-                                dynamicMessage.classList.add('visible');
-                            }
-                            break;
-                        case 1: // Email Step
-                            const emailReason = emailMessageMap[obstacle] || emailMessageMap.default;
-                            dynamicMessage.innerHTML = `Perfect, <strong>${userFirstName}</strong>. We need your best email ${emailReason}.`;
-                            dynamicMessage.classList.add('visible');
-                            break;
-                        case 2: // Phone Step
-                            const phoneReason = phoneMessageMap[fear] || phoneMessageMap.default;
-                            dynamicMessage.innerHTML = `Almost done, <strong>${userFirstName}</strong>! ${phoneReason}`;
-                            dynamicMessage.classList.add('visible');
-                            break;
-                    }
+                   // --- Start: Replace your existing switch statement with this FINAL block ---
+
+switch(stepIndex) {
+    case 0: // After user enters their first name
+        // Name is now at the end for a friendly, encouraging start.
+        dynamicMessage.innerHTML = `Time to unlock your Off Market Home List, <strong>${userFirstName}</strong>!`;
+        dynamicMessage.classList.add('visible');
+        break;
+
+    case 1: // For the Email field
+        // Name stays at the front to grab attention for the first big ask.
+        const emailMessageMap = {
+            'credit-score': "to see homes vetted for your credit.",
+            'down-payment': "to see all low down payment options.",
+            'self-doubt': "for immediate proof you can be a homeowner.",
+            'default': "to get exclusive access to off-market homes."
+        };
+        const emailReason = emailMessageMap[obstacle] || emailMessageMap.default;
+        dynamicMessage.innerHTML = `Okay, <strong>${userFirstName}</strong>, get your Off Market Home  list. Enter your email ${emailReason}`;
+        dynamicMessage.classList.add('visible');
+        break;
+
+    case 2: // For the Phone field
+        // Name is now in the middle, making the final step feel like a personal guide.
+        const phoneMessageMap = {
+            'losing-money': "to protect your investment with 'Price Lock' alerts.",
+            'complicated-contracts': "for alerts on homes with simple, jargon-free contracts.",
+            'never-own': "to get alerts that turn ownership from a dream into a concrete plan.",
+            'default': "for first-look access to the best homes before anyone else."
+        };
+        const phoneReason = phoneMessageMap[fear] || phoneMessageMap.default;
+        dynamicMessage.innerHTML = `Just one last step, <strong>${userFirstName}</strong>. Add your number so you don't miss out ${phoneReason}`;
+        dynamicMessage.classList.add('visible');
+        break;
+}
+
+// --- End: Final Replacement block ---
                     adjustFormHeight(currentStep);
                 }, 200);
 
@@ -301,7 +359,7 @@ setTimeout(() => {
                     formGroups[currentStep].querySelector('.form-input').focus(); 
                 }, 400);
 
-                buttonText.textContent = (currentStep === formGroups.length - 1) ? 'See My Path' : 'Next';
+                buttonText.textContent = (currentStep === formGroups.length - 1) ? 'Submit' : 'Next';
             };
             
             const validateStep = (stepIndex) => {
